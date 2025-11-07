@@ -1,5 +1,281 @@
 [
   {
+    "commonName": "Walrus",
+    "scientificName": "Odobenus rosmarus",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Carnivora",
+    "family": "Odobenidae",
+    "genus": "Odobenus",
+    "specificEpithet": "rosmarus",
+    "distribution": "Denmark, Norway, Sweden",
+    "threatStatus": "not applicable, not evaluated, vulnerable"
+  },
+  {
+    "commonName": "Giraffe",
+    "scientificName": "Giraffa camelopardalis",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Artiodactyla",
+    "family": "Giraffidae",
+    "genus": "Giraffa",
+    "specificEpithet": "camelopardalis",
+    "distribution": "Ecuador",
+    "threatStatus": "vulnerable"
+  },
+  {
+    "commonName": "Raccoon",
+    "scientificName": "Procyon lotor",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Carnivora",
+    "family": "Procyonidae",
+    "genus": "Procyon",
+    "specificEpithet": "lotor",
+    "distribution": "Austria, Azerbaijan, Bahamas, Barbados, Belarus, Belgium, Belize, Colombia, Czechia, Denmark and 25 more",
+    "threatStatus": "least concern, not applicable, not evaluated"
+  },
+  {
+    "commonName": "Red Fox",
+    "scientificName": "Vulpes vulpes",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Carnivora",
+    "family": "Canidae",
+    "genus": "Vulpes",
+    "specificEpithet": "vulpes",
+    "distribution": "Argentina, Australia, Belgium, Cyprus, Denmark, France, Greece, Israel, Italy, Norway and 3 more",
+    "threatStatus": "least concern, near threatened"
+  },
+  {
+    "commonName": "Grizzly Bear",
+    "scientificName": "Ursus arctos",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Carnivora",
+    "family": "Ursidae",
+    "genus": "Ursus",
+    "specificEpithet": "arctos",
+    "distribution": "Belgium, France, Norway, Russian Federation, Sweden, Ukraine",
+    "threatStatus": "least concern, near threatened, regionally extinct"
+  },
+  {
+    "commonName": "Polar Bear",
+    "scientificName": "Ursus maritimus",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Carnivora",
+    "family": "Ursidae",
+    "genus": "Ursus",
+    "specificEpithet": "maritimus",
+    "distribution": "Norway",
+    "threatStatus": "vulnerable"
+  },
+  {
+    "commonName": "Beaver",
+    "scientificName": "Castor fiber",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Rodentia",
+    "family": "Castoridae",
+    "genus": "Castor",
+    "specificEpithet": "fiber",
+    "distribution": "Belgium, Denmark, Norway, Portugal, Russian Federation, Sweden",
+    "threatStatus": "endangered, least concern, regionally extinct, vulnerable"
+  },
+  {
+    "commonName": "White-tailed Deer",
+    "scientificName": "Odocoileus virginianus",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Artiodactyla",
+    "family": "Cervidae",
+    "genus": "Odocoileus",
+    "specificEpithet": "virginianus",
+    "distribution": "Austria, Belgium, Bulgaria, Colombia, Costa Rica, Croatia, Cuba, Czechia, Ecuador, Finland and 10 more",
+    "threatStatus": "critically endangered, least concern, not applicable"
+  },
+  {
+    "commonName": "Mule Deer",
+    "scientificName": "Odocoileus hemionus",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Artiodactyla",
+    "family": "Cervidae",
+    "genus": "Odocoileus",
+    "specificEpithet": "hemionus",
+    "distribution": "Belgium, France, Netherlands, United Kingdom of Great Britain and Northern Ireland, United States of America",
+    "threatStatus": "least concern"
+  },
+  {
+    "commonName": "Reindeer",
+    "scientificName": "Rangifer tarandus",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Artiodactyla",
+    "family": "Cervidae",
+    "genus": "Rangifer",
+    "specificEpithet": "tarandus",
+    "distribution": "Argentina, Belgium, Falkland Islands (Malvinas), France, French Southern Territories, Germany, Iceland, Netherlands, Norway, Poland and 4 more",
+    "threatStatus": "regionally extinct, vulnerable"
+  },
+  {
+    "commonName": "Fallow Deer",
+    "scientificName": "Dama dama",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Artiodactyla",
+    "family": "Cervidae",
+    "genus": "Dama",
+    "specificEpithet": "dama",
+    "distribution": "Albania, Andorra, Antigua and Barbuda, Argentina, Australia, Austria, Belarus, Belgium, Bulgaria, Canada and 35 more",
+    "threatStatus": "least concern, not applicable, not evaluated"
+  },
+  {
+    "commonName": "Sika Deer",
+    "scientificName": "Cervus nippon",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Artiodactyla",
+    "family": "Cervidae",
+    "genus": "Cervus",
+    "specificEpithet": "nippon",
+    "distribution": "Austria, Azerbaijan, Belgium, Czechia, Denmark, Estonia, France, Germany, Hungary, Ireland and 18 more",
+    "threatStatus": "least concern, not applicable, not evaluated"
+  },
+  {
+    "commonName": "Red Deer",
+    "scientificName": "Cervus elaphus",
+    "phylum": "Chordata",
+    "class": "Mammalia",
+    "order": "Artiodactyla",
+    "family": "Cervidae",
+    "genus": "Cervus",
+    "specificEpithet": "elaphus",
+    "distribution": "Afghanistan, Argentina, Australia, Belgium, Chile, Czechia, Denmark, Estonia, France, Greece and 10 more",
+    "threatStatus": "least concern, regionally extinct, vulnerable"
+  },
+  {
+    "commonName": "American Flamingo",
+    "scientificName": "Phoenicopterus ruber",
+    "phylum": "Chordata",
+    "class": "Aves",
+    "order": "Phoenicopteriformes",
+    "family": "Phoenicopteridae",
+    "genus": "Phoenicopterus",
+    "specificEpithet": "ruber",
+    "distribution": "Belgium, Colombia, Denmark, Ecuador, Estonia, France, Germany, Netherlands, Norway, Poland and 3 more",
+    "threatStatus": "endangered, least concern, near threatened, not applicable, not evaluated, vulnerable"
+  },
+  {
+    "commonName": "Emu",
+    "scientificName": "Dromaius novaehollandiae",
+    "phylum": "Chordata",
+    "class": "Aves",
+    "order": "Casuariiformes",
+    "family": "Dromaiidae",
+    "genus": "Dromaius",
+    "specificEpithet": "novaehollandiae",
+    "distribution": "Belgium, Colombia, Ecuador, France, Nepal, Netherlands, Norway, Poland, United Kingdom of Great Britain and Northern Ireland",
+    "threatStatus": "least concern"
+  },
+  {
+    "commonName": "Cedar Waxwing",
+    "scientificName": "Bombycilla cedrorum",
+    "phylum": "Chordata",
+    "class": "Aves",
+    "order": "Passeriformes",
+    "family": "Bombycillidae",
+    "genus": "Bombycilla",
+    "specificEpithet": "cedrorum",
+    "distribution": "Belgium, Colombia, Ecuador, France, Netherlands, Norway, United Kingdom of Great Britain and Northern Ireland, United States of America, Venezuela (Bolivarian Republic of)",
+    "threatStatus": "least concern, not evaluated"
+  },
+  {
+    "commonName": "Greater Flamingo",
+    "scientificName": "Phoenicopterus roseus",
+    "phylum": "Chordata",
+    "class": "Aves",
+    "order": "Phoenicopteriformes",
+    "family": "Phoenicopteridae",
+    "genus": "Phoenicopterus",
+    "specificEpithet": "roseus",
+    "distribution": "Belgium, Denmark, France, Netherlands, Norway, Sweden, United Kingdom of Great Britain and Northern Ireland",
+    "threatStatus": "least concern, not applicable, not evaluated"
+  },
+  {
+    "commonName": "Fire Salamander",
+    "scientificName": "Salamandra salamandra",
+    "phylum": "Chordata",
+    "class": "Amphibia",
+    "order": "Caudata",
+    "family": "Salamandridae",
+    "genus": "Salamandra",
+    "specificEpithet": "salamandra",
+    "distribution": "Belgium, France, Luxembourg, Netherlands, Norway, Ukraine, United Kingdom of Great Britain and Northern Ireland",
+    "threatStatus": "least concern, vulnerable"
+  },
+  {
+    "commonName": "Wasp",
+    "scientificName": "Xiphydria prolongata",
+    "phylum": "Arthropoda",
+    "class": "Insecta",
+    "order": "Hymenoptera",
+    "family": "Xiphydriidae",
+    "genus": "Xiphydria",
+    "specificEpithet": "prolongata",
+    "distribution": "Belgium, Canada, Denmark, Norway, Sweden, United States of America",
+    "threatStatus": "least concern, not evaluated"
+  },
+  {
+    "commonName": "Louse",
+    "scientificName": "Trinoton querquedulae",
+    "phylum": "Arthropoda",
+    "class": "Insecta",
+    "order": "Psocodea",
+    "family": "Trinotonidae",
+    "genus": "Trinoton",
+    "specificEpithet": "querquedulae",
+    "distribution": "Norway, Sweden, United States of America",
+    "threatStatus": "not evaluated"
+  },
+  {
+    "commonName": "Mite",
+    "scientificName": "Peristerophila columbae",
+    "phylum": "Arthropoda",
+    "class": "Arachnida",
+    "order": "Trombidiformes",
+    "family": "Syringophilidae",
+    "genus": "Peristerophila",
+    "specificEpithet": "columbae",
+    "distribution": "Denmark, United States of America",
+    "threatStatus": "not evaluated"
+  },
+  {
+    "commonName": "Mite",
+    "scientificName": "Falculifer rostratus",
+    "phylum": "Arthropoda",
+    "class": "Arachnida",
+    "order": "Sarcoptiformes",
+    "family": "Falculiferidae",
+    "genus": "Falculifer",
+    "specificEpithet": "rostratus",
+    "distribution": "Chinese Taipei, Denmark, United States of America",
+    "threatStatus": "not evaluated"
+  },
+  {
+    "commonName": "Mite",
+    "scientificName": "Knemidokoptes pilae",
+    "phylum": "Arthropoda",
+    "class": "Arachnida",
+    "order": "Sarcoptiformes",
+    "family": "Epidermoptidae",
+    "genus": "Knemidokoptes",
+    "specificEpithet": "pilae",
+    "distribution": "Denmark, United States of America",
+    "threatStatus": "not evaluated"
+  },
+  {
     "commonName": "Kinkaju",
     "scientificName": "Potos flavus",
     "phylum": "Chordata",
@@ -648,18 +924,6 @@
     "threatStatus": "vulnerable"
   },
   {
-    "commonName": "Walrus",
-    "scientificName": "Odobenus rosmarus",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Carnivora",
-    "family": "Odobenidae",
-    "genus": "Odobenus",
-    "specificEpithet": "rosmarus",
-    "distribution": "Denmark, Norway, Sweden",
-    "threatStatus": "not applicable, not evaluated, vulnerable"
-  },
-  {
     "commonName": "Arctic Hare",
     "scientificName": "Lepus arcticus",
     "phylum": "Chordata",
@@ -924,18 +1188,6 @@
     "threatStatus": "endangered, least concern, vulnerable"
   },
   {
-    "commonName": "Giraffe",
-    "scientificName": "Giraffa camelopardalis",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Artiodactyla",
-    "family": "Giraffidae",
-    "genus": "Giraffa",
-    "specificEpithet": "camelopardalis",
-    "distribution": "Ecuador",
-    "threatStatus": "vulnerable"
-  },
-  {
     "commonName": "Large Hippo",
     "scientificName": "Hippopotamus amphibius",
     "phylum": "Chordata",
@@ -1138,18 +1390,6 @@
     "specificEpithet": "cancrivorus",
     "distribution": "Belgium, Colombia, France, Netherlands, United Kingdom of Great Britain and Northern Ireland, Venezuela (Bolivarian Republic of)",
     "threatStatus": "least concern, not evaluated"
-  },
-  {
-    "commonName": "Raccoon",
-    "scientificName": "Procyon lotor",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Carnivora",
-    "family": "Procyonidae",
-    "genus": "Procyon",
-    "specificEpithet": "lotor",
-    "distribution": "Austria, Azerbaijan, Bahamas, Barbados, Belarus, Belgium, Belize, Colombia, Czechia, Denmark and 25 more",
-    "threatStatus": "least concern, not applicable, not evaluated"
   },
   {
     "commonName": "South American Coati",
@@ -1656,18 +1896,6 @@
     "threatStatus": "least concern"
   },
   {
-    "commonName": "Red Fox",
-    "scientificName": "Vulpes vulpes",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Carnivora",
-    "family": "Canidae",
-    "genus": "Vulpes",
-    "specificEpithet": "vulpes",
-    "distribution": "Argentina, Australia, Belgium, Cyprus, Denmark, France, Greece, Israel, Italy, Norway and 3 more",
-    "threatStatus": "least concern, near threatened"
-  },
-  {
     "commonName": "White-eared Opossum",
     "scientificName": "Didelphis albiventris",
     "phylum": "Chordata",
@@ -2172,42 +2400,6 @@
     "threatStatus": "least concern"
   },
   {
-    "commonName": "Grizzly Bear",
-    "scientificName": "Ursus arctos",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Carnivora",
-    "family": "Ursidae",
-    "genus": "Ursus",
-    "specificEpithet": "arctos",
-    "distribution": "Belgium, France, Norway, Russian Federation, Sweden, Ukraine",
-    "threatStatus": "least concern, near threatened, regionally extinct"
-  },
-  {
-    "commonName": "Polar Bear",
-    "scientificName": "Ursus maritimus",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Carnivora",
-    "family": "Ursidae",
-    "genus": "Ursus",
-    "specificEpithet": "maritimus",
-    "distribution": "Norway",
-    "threatStatus": "vulnerable"
-  },
-  {
-    "commonName": "Beaver",
-    "scientificName": "Castor fiber",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Rodentia",
-    "family": "Castoridae",
-    "genus": "Castor",
-    "specificEpithet": "fiber",
-    "distribution": "Belgium, Denmark, Norway, Portugal, Russian Federation, Sweden",
-    "threatStatus": "endangered, least concern, regionally extinct, vulnerable"
-  },
-  {
     "commonName": "Bicolored Shrew",
     "scientificName": "Crocidura leucodon",
     "phylum": "Chordata",
@@ -2688,30 +2880,6 @@
     "threatStatus": "least concern, not applicable, not evaluated"
   },
   {
-    "commonName": "White-tailed Deer",
-    "scientificName": "Odocoileus virginianus",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Artiodactyla",
-    "family": "Cervidae",
-    "genus": "Odocoileus",
-    "specificEpithet": "virginianus",
-    "distribution": "Austria, Belgium, Bulgaria, Colombia, Costa Rica, Croatia, Cuba, Czechia, Ecuador, Finland and 10 more",
-    "threatStatus": "critically endangered, least concern, not applicable"
-  },
-  {
-    "commonName": "Mule Deer",
-    "scientificName": "Odocoileus hemionus",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Artiodactyla",
-    "family": "Cervidae",
-    "genus": "Odocoileus",
-    "specificEpithet": "hemionus",
-    "distribution": "Belgium, France, Netherlands, United Kingdom of Great Britain and Northern Ireland, United States of America",
-    "threatStatus": "least concern"
-  },
-  {
     "commonName": "Siberian Elk",
     "scientificName": "Alces alces",
     "phylum": "Chordata",
@@ -2772,18 +2940,6 @@
     "threatStatus": "least concern, not applicable, not evaluated"
   },
   {
-    "commonName": "Reindeer",
-    "scientificName": "Rangifer tarandus",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Artiodactyla",
-    "family": "Cervidae",
-    "genus": "Rangifer",
-    "specificEpithet": "tarandus",
-    "distribution": "Argentina, Belgium, Falkland Islands (Malvinas), France, French Southern Territories, Germany, Iceland, Netherlands, Norway, Poland and 4 more",
-    "threatStatus": "regionally extinct, vulnerable"
-  },
-  {
     "commonName": "Père David's Deer",
     "scientificName": "Elaphurus davidianus",
     "phylum": "Chordata",
@@ -2806,42 +2962,6 @@
     "specificEpithet": "mephistophiles",
     "distribution": "Colombia, Ecuador",
     "threatStatus": "data deficient, near threatened, vulnerable"
-  },
-  {
-    "commonName": "Fallow Deer",
-    "scientificName": "Dama dama",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Artiodactyla",
-    "family": "Cervidae",
-    "genus": "Dama",
-    "specificEpithet": "dama",
-    "distribution": "Albania, Andorra, Antigua and Barbuda, Argentina, Australia, Austria, Belarus, Belgium, Bulgaria, Canada and 35 more",
-    "threatStatus": "least concern, not applicable, not evaluated"
-  },
-  {
-    "commonName": "Sika Deer",
-    "scientificName": "Cervus nippon",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Artiodactyla",
-    "family": "Cervidae",
-    "genus": "Cervus",
-    "specificEpithet": "nippon",
-    "distribution": "Austria, Azerbaijan, Belgium, Czechia, Denmark, Estonia, France, Germany, Hungary, Ireland and 18 more",
-    "threatStatus": "least concern, not applicable, not evaluated"
-  },
-  {
-    "commonName": "Red Deer",
-    "scientificName": "Cervus elaphus",
-    "phylum": "Chordata",
-    "class": "Mammalia",
-    "order": "Artiodactyla",
-    "family": "Cervidae",
-    "genus": "Cervus",
-    "specificEpithet": "elaphus",
-    "distribution": "Afghanistan, Argentina, Australia, Belgium, Chile, Czechia, Denmark, Estonia, France, Greece and 10 more",
-    "threatStatus": "least concern, regionally extinct, vulnerable"
   },
   {
     "commonName": "Water Deer",
@@ -3058,18 +3178,6 @@
     "specificEpithet": "crepitans",
     "distribution": "Colombia, Ecuador, Norway, Venezuela (Bolivarian Republic of)",
     "threatStatus": "least concern, near threatened"
-  },
-  {
-    "commonName": "American Flamingo",
-    "scientificName": "Phoenicopterus ruber",
-    "phylum": "Chordata",
-    "class": "Aves",
-    "order": "Phoenicopteriformes",
-    "family": "Phoenicopteridae",
-    "genus": "Phoenicopterus",
-    "specificEpithet": "ruber",
-    "distribution": "Belgium, Colombia, Denmark, Ecuador, Estonia, France, Germany, Netherlands, Norway, Poland and 3 more",
-    "threatStatus": "endangered, least concern, near threatened, not applicable, not evaluated, vulnerable"
   },
   {
     "commonName": "Zebra Finch",
@@ -3706,18 +3814,6 @@
     "specificEpithet": "torquatus",
     "distribution": "Norway",
     "threatStatus": "endangered"
-  },
-  {
-    "commonName": "Emu",
-    "scientificName": "Dromaius novaehollandiae",
-    "phylum": "Chordata",
-    "class": "Aves",
-    "order": "Casuariiformes",
-    "family": "Dromaiidae",
-    "genus": "Dromaius",
-    "specificEpithet": "novaehollandiae",
-    "distribution": "Belgium, Colombia, Ecuador, France, Nepal, Netherlands, Norway, Poland, United Kingdom of Great Britain and Northern Ireland",
-    "threatStatus": "least concern"
   },
   {
     "commonName": "Black-legged Seriema",
@@ -5160,18 +5256,6 @@
     "threatStatus": "vulnerable"
   },
   {
-    "commonName": "Cedar Waxwing",
-    "scientificName": "Bombycilla cedrorum",
-    "phylum": "Chordata",
-    "class": "Aves",
-    "order": "Passeriformes",
-    "family": "Bombycillidae",
-    "genus": "Bombycilla",
-    "specificEpithet": "cedrorum",
-    "distribution": "Belgium, Colombia, Ecuador, France, Netherlands, Norway, United Kingdom of Great Britain and Northern Ireland, United States of America, Venezuela (Bolivarian Republic of)",
-    "threatStatus": "least concern, not evaluated"
-  },
-  {
     "commonName": "Olive-crowned Crescentchest",
     "scientificName": "Melanopareia maximiliani",
     "phylum": "Chordata",
@@ -5938,18 +6022,6 @@
     "specificEpithet": "ceylonensis",
     "distribution": "Norway",
     "threatStatus": "least concern"
-  },
-  {
-    "commonName": "Greater Flamingo",
-    "scientificName": "Phoenicopterus roseus",
-    "phylum": "Chordata",
-    "class": "Aves",
-    "order": "Phoenicopteriformes",
-    "family": "Phoenicopteridae",
-    "genus": "Phoenicopterus",
-    "specificEpithet": "roseus",
-    "distribution": "Belgium, Denmark, France, Netherlands, Norway, Sweden, United Kingdom of Great Britain and Northern Ireland",
-    "threatStatus": "least concern, not applicable, not evaluated"
   },
   {
     "commonName": "Chilean Flamingo",
@@ -8112,18 +8184,6 @@
     "threatStatus": "least concern"
   },
   {
-    "commonName": "Fire Salamander",
-    "scientificName": "Salamandra salamandra",
-    "phylum": "Chordata",
-    "class": "Amphibia",
-    "order": "Caudata",
-    "family": "Salamandridae",
-    "genus": "Salamandra",
-    "specificEpithet": "salamandra",
-    "distribution": "Belgium, France, Luxembourg, Netherlands, Norway, Ukraine, United Kingdom of Great Britain and Northern Ireland",
-    "threatStatus": "least concern, vulnerable"
-  },
-  {
     "commonName": "Palmate Newt",
     "scientificName": "Lissotriton helveticus",
     "phylum": "Chordata",
@@ -8397,18 +8457,6 @@
     "genus": "Auplopus",
     "specificEpithet": "carbonarius",
     "distribution": "Belgium, Denmark, Norway, Sweden, United States of America",
-    "threatStatus": "least concern, not evaluated"
-  },
-  {
-    "commonName": "Wasp",
-    "scientificName": "Xiphydria prolongata",
-    "phylum": "Arthropoda",
-    "class": "Insecta",
-    "order": "Hymenoptera",
-    "family": "Xiphydriidae",
-    "genus": "Xiphydria",
-    "specificEpithet": "prolongata",
-    "distribution": "Belgium, Canada, Denmark, Norway, Sweden, United States of America",
     "threatStatus": "least concern, not evaluated"
   },
   {
@@ -8724,18 +8772,6 @@
     "threatStatus": "least concern"
   },
   {
-    "commonName": "Louse",
-    "scientificName": "Trinoton querquedulae",
-    "phylum": "Arthropoda",
-    "class": "Insecta",
-    "order": "Psocodea",
-    "family": "Trinotonidae",
-    "genus": "Trinoton",
-    "specificEpithet": "querquedulae",
-    "distribution": "Norway, Sweden, United States of America",
-    "threatStatus": "not evaluated"
-  },
-  {
     "commonName": "Nettle Groundbug",
     "scientificName": "Heterogaster urticae",
     "phylum": "Arthropoda",
@@ -8796,18 +8832,6 @@
     "threatStatus": "endangered, least concern, near threatened"
   },
   {
-    "commonName": "Mite",
-    "scientificName": "Peristerophila columbae",
-    "phylum": "Arthropoda",
-    "class": "Arachnida",
-    "order": "Trombidiformes",
-    "family": "Syringophilidae",
-    "genus": "Peristerophila",
-    "specificEpithet": "columbae",
-    "distribution": "Denmark, United States of America",
-    "threatStatus": "not evaluated"
-  },
-  {
     "commonName": "Purse Web Spider",
     "scientificName": "Atypus affinis",
     "phylum": "Arthropoda",
@@ -8818,30 +8842,6 @@
     "specificEpithet": "affinis",
     "distribution": "Belgium, Denmark, Sweden",
     "threatStatus": "endangered, vulnerable"
-  },
-  {
-    "commonName": "Mite",
-    "scientificName": "Falculifer rostratus",
-    "phylum": "Arthropoda",
-    "class": "Arachnida",
-    "order": "Sarcoptiformes",
-    "family": "Falculiferidae",
-    "genus": "Falculifer",
-    "specificEpithet": "rostratus",
-    "distribution": "Chinese Taipei, Denmark, United States of America",
-    "threatStatus": "not evaluated"
-  },
-  {
-    "commonName": "Mite",
-    "scientificName": "Knemidokoptes pilae",
-    "phylum": "Arthropoda",
-    "class": "Arachnida",
-    "order": "Sarcoptiformes",
-    "family": "Epidermoptidae",
-    "genus": "Knemidokoptes",
-    "specificEpithet": "pilae",
-    "distribution": "Denmark, United States of America",
-    "threatStatus": "not evaluated"
   },
   {
     "commonName": "American house dust mite",
