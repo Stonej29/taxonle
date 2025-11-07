@@ -432,41 +432,14 @@
             color: white;
         }
 
-        .guess-history {
-            margin-top: 20px;
-            max-height: 300px;
-            overflow-y: auto;
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
         }
 
-        .guess-item {
-            padding: 12px;
-            margin-bottom: 10px;
-            background: #f8f9fa;
-            border-radius: 6px;
-            border-left: 4px solid #52c234;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .guess-item-name {
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 4px;
-        }
-
-        .guess-item-common {
-            font-size: 0.85em;
-            color: #666;
+        .button-group button {
+            flex: 1;
         }
 
         .level-label {
@@ -531,7 +504,10 @@
                     <div id="autocompleteList" class="autocomplete-list"></div>
                 </div>
                 <button id="guessBtn" onclick="makeGuess()">Submit Guess</button>
-                <button id="giveUpBtn" onclick="giveUp()" style="background: #dc3545; margin-top: 10px;">Give Up</button>
+                <div class="button-group">
+                    <button id="retryBtn" onclick="startNewGame()" style="background: #ffa500;">New Game</button>
+                    <button id="giveUpBtn" onclick="giveUp()" style="background: #dc3545;">Give Up</button>
+                </div>
             </div>
 
             <div class="instructions">
@@ -542,8 +518,6 @@
                 <p>• Closer guesses reveal deeper paths</p>
                 <p>• Find the target animal!</p>
             </div>
-
-            <div class="guess-history" id="guessHistory"></div>
         </div>
 
         <div class="tree-panel">
@@ -613,12 +587,12 @@
 
             updateStats();
             renderTree();
-            document.getElementById('guessHistory').innerHTML = '';
             document.getElementById('messageArea').innerHTML = '';
             document.getElementById('guessInput').value = '';
             document.getElementById('guessInput').disabled = false;
             document.getElementById('guessBtn').disabled = false;
             document.getElementById('giveUpBtn').disabled = false;
+            document.getElementById('retryBtn').disabled = false;
 
             console.log('Target:', targetAnimal);
         }
@@ -711,9 +685,6 @@
 
             // Compare with target and update tree
             const commonLevel = compareWithTarget(animal);
-
-            // Add to guess history
-            addToGuessHistory(animal, commonLevel);
 
             // Update stats
             updateStats();
@@ -1042,20 +1013,6 @@
             });
         }
 
-        // Add to guess history
-        function addToGuessHistory(animal, commonLevel) {
-            const historyDiv = document.getElementById('guessHistory');
-            const item = document.createElement('div');
-            item.className = 'guess-item';
-            item.innerHTML = `
-                <div class="guess-item-name">${animal.commonName}</div>
-                <div class="guess-item-common">
-                    ${animal.scientificName} • Common to: ${commonLevel}
-                </div>
-            `;
-            historyDiv.insertBefore(item, historyDiv.firstChild);
-        }
-
         // Update statistics
         function updateStats() {
             document.getElementById('guessCount').textContent = `${guessCount} / ${maxGuesses}`;
@@ -1078,6 +1035,7 @@
             guessInput.disabled = true;
             document.getElementById('guessBtn').disabled = true;
             document.getElementById('giveUpBtn').disabled = true;
+            document.getElementById('retryBtn').disabled = true;
 
             const messageArea = document.getElementById('messageArea');
             messageArea.innerHTML = `
@@ -1097,6 +1055,7 @@
             guessInput.disabled = true;
             document.getElementById('guessBtn').disabled = true;
             document.getElementById('giveUpBtn').disabled = true;
+            document.getElementById('retryBtn').disabled = true;
 
             const messageArea = document.getElementById('messageArea');
             messageArea.innerHTML = `
@@ -1122,6 +1081,7 @@
             guessInput.disabled = true;
             document.getElementById('guessBtn').disabled = true;
             document.getElementById('giveUpBtn').disabled = true;
+            document.getElementById('retryBtn').disabled = true;
 
             // Reveal the target in the tree by setting deepest level to 6
             deepestLevel = 6;
