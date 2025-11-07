@@ -453,6 +453,131 @@
             text-align: center;
         }
 
+        .settings-btn {
+            background: #6c757d;
+            margin-top: 15px;
+            padding: 10px;
+            font-size: 0.9em;
+        }
+
+        .settings-btn:hover {
+            background: #5a6268;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #52c234;
+        }
+
+        .modal-header h2 {
+            color: #2d7a1f;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2em;
+            color: #666;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .settings-description {
+            margin-bottom: 20px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .filter-tree {
+            margin-top: 20px;
+        }
+
+        .filter-tree-node {
+            margin: 10px 0;
+        }
+
+        .filter-node-content {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            user-select: none;
+        }
+
+        .filter-node-content:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .filter-node-content.disabled {
+            opacity: 0.3;
+            filter: grayscale(100%);
+        }
+
+        .filter-children {
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+
+        .filter-node-phylum {
+            background: linear-gradient(135deg, #f06595, #e64980);
+            color: white;
+            box-shadow: 0 3px 8px rgba(240, 101, 149, 0.4);
+        }
+
+        .filter-node-class {
+            background: linear-gradient(135deg, #cc5de8, #be4bdb);
+            color: white;
+            box-shadow: 0 3px 8px rgba(204, 93, 232, 0.4);
+        }
+
         @media (max-width: 1024px) {
             .game-container {
                 grid-template-columns: 1fr;
@@ -518,6 +643,8 @@
                 <p>• Closer guesses reveal deeper paths</p>
                 <p>• Find the target animal!</p>
             </div>
+
+            <button class="settings-btn" onclick="openSettings()">⚙️ Settings</button>
         </div>
 
         <div class="tree-panel">
@@ -530,6 +657,20 @@
                     <div class="empty-tree-text">Start guessing to reveal the tree!</div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay" onclick="closeSettingsIfOutside(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>⚙️ Filter Settings</h2>
+                <button class="close-btn" onclick="closeSettings()">&times;</button>
+            </div>
+            <div class="settings-description">
+                Click on taxonomy groups to disable them. Disabled groups (greyed out) will be excluded from the animal pool.
+            </div>
+            <div id="filterTree" class="filter-tree"></div>
         </div>
     </div>
 
@@ -554,12 +695,15 @@
 
         let deepestLevel = 0;
 
+        // Track disabled taxonomy paths
+        let disabledPaths = new Set();
+
         // Load animals data
         async function loadAnimals() {
             try {
                 const response = await fetch('animals_data.json');
                 animals = await response.json();
-                document.getElementById('totalAnimals').textContent = animals.length;
+                updateAnimalCount();
                 startNewGame();
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('gameContainer').style.display = 'grid';
@@ -570,7 +714,12 @@
         }
 
         function startNewGame() {
-            targetAnimal = animals[Math.floor(Math.random() * animals.length)];
+            const availableAnimals = getFilteredAnimals();
+            if (availableAnimals.length === 0) {
+                alert('No animals available with current filter settings!');
+                return;
+            }
+            targetAnimal = availableAnimals[Math.floor(Math.random() * availableAnimals.length)];
             guesses = [];
             guessCount = 0;
             gameOver = false;
@@ -609,7 +758,7 @@
                 return;
             }
 
-            const matches = animals
+            const matches = getFilteredAnimals()
                 .filter(animal =>
                     animal.commonName.toLowerCase().includes(searchTerm) ||
                     animal.scientificName.toLowerCase().includes(searchTerm)
@@ -663,13 +812,13 @@
             }
 
             // Find the animal
-            const animal = animals.find(a =>
+            const animal = getFilteredAnimals().find(a =>
                 a.commonName.toLowerCase() === input.toLowerCase() ||
                 a.scientificName.toLowerCase() === input.toLowerCase()
             );
 
             if (!animal) {
-                showMessage('Animal not found in database. Try autocomplete!', 'error');
+                showMessage('Animal not available. Check filter settings!', 'error');
                 return;
             }
 
@@ -1116,6 +1265,143 @@
                 }
             }, 100);
         });
+
+        // Settings Modal Functions
+        function openSettings() {
+            buildFilterTree();
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        function closeSettingsIfOutside(event) {
+            if (event.target.id === 'settingsModal') {
+                closeSettings();
+            }
+        }
+
+        // Build taxonomy filter tree (top 3 levels: Kingdom, Phylum, Class)
+        function buildFilterTree() {
+            const tree = {};
+
+            animals.forEach(animal => {
+                const phylum = animal.phylum || 'Unknown';
+                const className = animal.class || 'Unknown';
+
+                if (!tree[phylum]) {
+                    tree[phylum] = new Set();
+                }
+                tree[phylum].add(className);
+            });
+
+            renderFilterTree(tree);
+        }
+
+        // Render the filter tree in the modal
+        function renderFilterTree(tree) {
+            const container = document.getElementById('filterTree');
+            let html = '<div class="filter-tree-node">';
+
+            // Kingdom (always Animalia)
+            html += '<div class="filter-node-content filter-node-phylum" style="background: linear-gradient(135deg, #ff6b6b, #ee5a6f);">Animalia (Kingdom)</div>';
+
+            // Phyla and Classes
+            const sortedPhyla = Object.keys(tree).sort();
+            sortedPhyla.forEach(phylum => {
+                const phylumPath = `phylum:${phylum}`;
+                const phylumDisabled = disabledPaths.has(phylumPath);
+
+                html += '<div class="filter-children">';
+                html += `<div class="filter-tree-node">`;
+                html += `<div class="filter-node-content filter-node-phylum ${phylumDisabled ? 'disabled' : ''}"
+                         onclick="toggleTaxonomyPath('${phylumPath}')">
+                         ${phylum}
+                         </div>`;
+
+                // Classes under this phylum
+                const sortedClasses = Array.from(tree[phylum]).sort();
+                if (sortedClasses.length > 0) {
+                    html += '<div class="filter-children">';
+                    sortedClasses.forEach(className => {
+                        const classPath = `phylum:${phylum}|class:${className}`;
+                        const classDisabled = disabledPaths.has(classPath) || phylumDisabled;
+
+                        html += `<div class="filter-tree-node">`;
+                        html += `<div class="filter-node-content filter-node-class ${classDisabled ? 'disabled' : ''}"
+                                 onclick="toggleTaxonomyPath('${classPath}', '${phylumPath}')">
+                                 ${className}
+                                 </div>`;
+                        html += '</div>';
+                    });
+                    html += '</div>';
+                }
+
+                html += '</div>';
+                html += '</div>';
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // Toggle taxonomy path on/off
+        function toggleTaxonomyPath(path, parentPath) {
+            if (disabledPaths.has(path)) {
+                // Enable this path and all children
+                const pathsToRemove = Array.from(disabledPaths).filter(p => p === path || p.startsWith(path + '|'));
+                pathsToRemove.forEach(p => disabledPaths.delete(p));
+            } else {
+                // Disable this path (children will be implicitly disabled)
+                disabledPaths.add(path);
+
+                // If parent is disabled, we don't need to explicitly disable children
+                if (parentPath && disabledPaths.has(parentPath)) {
+                    disabledPaths.delete(path);
+                }
+            }
+
+            buildFilterTree();
+            updateAnimalCount();
+        }
+
+        // Filter animals based on disabled paths
+        function getFilteredAnimals() {
+            if (!animals || animals.length === 0) {
+                return [];
+            }
+
+            if (disabledPaths.size === 0) {
+                return animals;
+            }
+
+            return animals.filter(animal => {
+                const phylum = animal.phylum || 'Unknown';
+                const className = animal.class || 'Unknown';
+
+                const phylumPath = `phylum:${phylum}`;
+                const classPath = `phylum:${phylum}|class:${className}`;
+
+                // If phylum is disabled, exclude
+                if (disabledPaths.has(phylumPath)) {
+                    return false;
+                }
+
+                // If class is disabled, exclude
+                if (disabledPaths.has(classPath)) {
+                    return false;
+                }
+
+                return true;
+            });
+        }
+
+        // Update animal count in stats
+        function updateAnimalCount() {
+            const filteredCount = getFilteredAnimals().length;
+            document.getElementById('totalAnimals').textContent = filteredCount;
+        }
 
         // Initialize
         loadAnimals();
