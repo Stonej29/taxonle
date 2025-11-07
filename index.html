@@ -188,7 +188,7 @@
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             min-height: 600px;
-            overflow-x: auto;
+            overflow: auto;
         }
 
         .tree-header {
@@ -202,85 +202,132 @@
             font-size: 1.8em;
         }
 
-        .taxonomy-tree {
-            font-family: 'Courier New', monospace;
-            font-size: 0.95em;
-            line-height: 1.8;
+        .tree-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .tree-level {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            position: relative;
+            width: 100%;
+        }
+
+        .tree-nodes {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
         }
 
         .tree-node {
-            margin-left: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+            min-width: 120px;
             position: relative;
+            animation: fadeIn 0.5s ease-out;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .tree-node.level-0 { margin-left: 0; }
-        .tree-node.level-1 { margin-left: 25px; }
-        .tree-node.level-2 { margin-left: 50px; }
-        .tree-node.level-3 { margin-left: 75px; }
-        .tree-node.level-4 { margin-left: 100px; }
-        .tree-node.level-5 { margin-left: 125px; }
-        .tree-node.level-6 { margin-left: 150px; }
-
-        .tree-label {
-            display: inline-block;
-            padding: 6px 12px;
-            margin: 3px 0;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.2s;
-            animation: fadeIn 0.4s ease-out;
+        .tree-node:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateX(-10px);
+                transform: scale(0.9);
             }
             to {
                 opacity: 1;
-                transform: translateX(0);
+                transform: scale(1);
             }
         }
 
-        .tree-label:hover {
-            transform: scale(1.05);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        .tree-node.kingdom {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.4);
         }
 
-        .tree-label.kingdom { background: #ffebee; color: #c62828; font-weight: bold; }
-        .tree-label.phylum { background: #fce4ec; color: #ad1457; }
-        .tree-label.class { background: #f3e5f5; color: #6a1b9a; }
-        .tree-label.order { background: #e8eaf6; color: #283593; }
-        .tree-label.family { background: #e3f2fd; color: #0277bd; }
-        .tree-label.genus { background: #e0f2f1; color: #00695c; }
-        .tree-label.species { background: #e8f5e9; color: #2e7d32; font-weight: bold; }
-
-        .tree-branch {
-            border-left: 2px solid #ddd;
-            margin-left: 10px;
-            padding-left: 15px;
+        .tree-node.phylum {
+            background: linear-gradient(135deg, #f06595, #e64980);
+            color: white;
+            box-shadow: 0 3px 8px rgba(240, 101, 149, 0.4);
         }
 
-        .species-info {
-            font-size: 0.85em;
-            color: #666;
-            font-style: italic;
-            margin-left: 10px;
+        .tree-node.class {
+            background: linear-gradient(135deg, #cc5de8, #be4bdb);
+            color: white;
+            box-shadow: 0 3px 8px rgba(204, 93, 232, 0.4);
+        }
+
+        .tree-node.order {
+            background: linear-gradient(135deg, #748ffc, #5c7cfa);
+            color: white;
+            box-shadow: 0 3px 8px rgba(116, 143, 252, 0.4);
+        }
+
+        .tree-node.family {
+            background: linear-gradient(135deg, #4dabf7, #339af0);
+            color: white;
+            box-shadow: 0 3px 8px rgba(77, 171, 247, 0.4);
+        }
+
+        .tree-node.genus {
+            background: linear-gradient(135deg, #38d9a9, #20c997);
+            color: white;
+            box-shadow: 0 3px 8px rgba(56, 217, 169, 0.4);
+        }
+
+        .tree-node.species {
+            background: linear-gradient(135deg, #69db7c, #51cf66);
+            color: white;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 3px 8px rgba(105, 219, 124, 0.4);
+        }
+
+        .tree-node.target {
+            background: linear-gradient(135deg, #ffd43b, #fab005);
+            color: #333;
+            font-weight: bold;
+            font-size: 1.15em;
+            box-shadow: 0 4px 12px rgba(255, 212, 59, 0.5);
+            border: 3px solid #f59f00;
+        }
+
+        .tree-connector {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(180deg, #52c234, #a8d530);
+            margin: 0 auto;
         }
 
         .empty-tree {
             text-align: center;
-            padding: 60px 20px;
+            padding: 80px 20px;
             color: #999;
         }
 
         .empty-tree-icon {
-            font-size: 4em;
+            font-size: 5em;
             margin-bottom: 20px;
+            opacity: 0.5;
         }
 
         .empty-tree-text {
-            font-size: 1.2em;
+            font-size: 1.3em;
         }
 
         .message {
@@ -352,24 +399,49 @@
             color: white;
         }
 
-        .legend {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-top: 15px;
+        .guess-history {
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .guess-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #52c234;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .guess-item-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .guess-item-common {
             font-size: 0.85em;
+            color: #666;
         }
 
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 3px;
+        .level-label {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            opacity: 0.8;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
         }
 
         @media (max-width: 1024px) {
@@ -387,7 +459,7 @@
 <body>
     <div class="header">
         <h1>🌿 Taxonle</h1>
-        <p class="subtitle">Discover and build the tree of life!</p>
+        <p class="subtitle">Discover the hidden animal through taxonomy!</p>
     </div>
 
     <div id="loading" class="loading">Loading animal kingdom...</div>
@@ -400,8 +472,8 @@
                     <span class="stat-value" id="guessCount">0 / 20</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-label">Species Found</span>
-                    <span class="stat-value" id="speciesCount">0</span>
+                    <span class="stat-label">Path Revealed</span>
+                    <span class="stat-value" id="pathDepth">0 / 7</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-label">Database Size</span>
@@ -422,57 +494,29 @@
                     >
                     <div id="autocompleteList" class="autocomplete-list"></div>
                 </div>
-                <button id="guessBtn" onclick="makeGuess()">Add to Tree</button>
+                <button id="guessBtn" onclick="makeGuess()">Submit Guess</button>
             </div>
 
             <div class="instructions">
                 <h4>How to Play</h4>
-                <p>• Guess any animal species by name</p>
-                <p>• Each correct guess reveals its taxonomic branch</p>
-                <p>• Build the tree with 20 guesses</p>
-                <p>• Discover as many species as possible!</p>
-
-                <div class="legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #ffebee;"></div>
-                        <span>Kingdom</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #fce4ec;"></div>
-                        <span>Phylum</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #f3e5f5;"></div>
-                        <span>Class</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #e8eaf6;"></div>
-                        <span>Order</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #e3f2fd;"></div>
-                        <span>Family</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #e0f2f1;"></div>
-                        <span>Genus</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-color" style="background: #e8f5e9;"></div>
-                        <span>Species</span>
-                    </div>
-                </div>
+                <p>• A mystery animal has been selected</p>
+                <p>• Guess animals to reveal shared taxonomy</p>
+                <p>• The tree shows what you have in common</p>
+                <p>• Closer guesses reveal deeper paths</p>
+                <p>• Find the target animal!</p>
             </div>
+
+            <div class="guess-history" id="guessHistory"></div>
         </div>
 
         <div class="tree-panel">
             <div class="tree-header">
                 <h2>Taxonomy Tree</h2>
             </div>
-            <div id="treeDisplay" class="taxonomy-tree">
+            <div id="treeDisplay" class="tree-container">
                 <div class="empty-tree">
                     <div class="empty-tree-icon">🌱</div>
-                    <div class="empty-tree-text">Start guessing to grow your tree!</div>
+                    <div class="empty-tree-text">Start guessing to reveal the tree!</div>
                 </div>
             </div>
         </div>
@@ -480,15 +524,24 @@
 
     <script>
         let animals = [];
-        let discoveredAnimals = [];
+        let targetAnimal = null;
+        let guesses = [];
         let guessCount = 0;
         const maxGuesses = 20;
         let gameOver = false;
 
-        // Taxonomy tree structure
-        const taxonomyTree = {
-            kingdoms: {}
+        // Tree structure to track revealed nodes
+        const revealedTree = {
+            kingdom: null,
+            phylum: new Set(),
+            class: new Set(),
+            order: new Set(),
+            family: new Set(),
+            genus: new Set(),
+            species: new Set()
         };
+
+        let deepestLevel = 0;
 
         // Load animals data
         async function loadAnimals() {
@@ -496,12 +549,40 @@
                 const response = await fetch('animals_data.json');
                 animals = await response.json();
                 document.getElementById('totalAnimals').textContent = animals.length;
+                startNewGame();
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('gameContainer').style.display = 'grid';
             } catch (error) {
                 document.getElementById('loading').textContent = 'Error loading data. Please refresh.';
                 console.error('Error loading animals:', error);
             }
+        }
+
+        function startNewGame() {
+            targetAnimal = animals[Math.floor(Math.random() * animals.length)];
+            guesses = [];
+            guessCount = 0;
+            gameOver = false;
+            deepestLevel = 0;
+
+            // Reset tree
+            revealedTree.kingdom = null;
+            revealedTree.phylum = new Set();
+            revealedTree.class = new Set();
+            revealedTree.order = new Set();
+            revealedTree.family = new Set();
+            revealedTree.genus = new Set();
+            revealedTree.species = new Set();
+
+            updateStats();
+            renderTree();
+            document.getElementById('guessHistory').innerHTML = '';
+            document.getElementById('messageArea').innerHTML = '';
+            document.getElementById('guessInput').value = '';
+            document.getElementById('guessInput').disabled = false;
+            document.getElementById('guessBtn').disabled = false;
+
+            console.log('Target:', targetAnimal);
         }
 
         // Autocomplete functionality
@@ -580,86 +661,102 @@
                 return;
             }
 
-            // Check if already discovered
-            if (discoveredAnimals.some(a => a.scientificName === animal.scientificName)) {
-                showMessage('You already discovered this species!', 'info');
+            // Check if already guessed
+            if (guesses.some(g => g.scientificName === animal.scientificName)) {
+                showMessage('You already guessed this species!', 'info');
                 return;
             }
 
-            // Add to discovered
-            discoveredAnimals.push(animal);
+            // Add to guesses
+            guesses.push(animal);
             guessCount++;
 
-            // Add to tree
-            addToTree(animal);
+            // Compare with target and update tree
+            const commonLevel = compareWithTarget(animal);
+
+            // Add to guess history
+            addToGuessHistory(animal, commonLevel);
 
             // Update stats
             updateStats();
 
-            // Show success message
-            showMessage(`✓ Added: ${animal.commonName} (${animal.scientificName})`, 'success');
+            // Check if won
+            if (animal.scientificName === targetAnimal.scientificName) {
+                winGame();
+                return;
+            }
+
+            // Check if lost
+            if (guessCount >= maxGuesses) {
+                loseGame();
+                return;
+            }
 
             // Clear input
             guessInput.value = '';
             guessInput.focus();
-
-            // Check game over
-            if (guessCount >= maxGuesses) {
-                endGame();
-            }
         }
 
-        // Add animal to taxonomy tree
-        function addToTree(animal) {
-            const kingdom = 'Animalia';
-            const phylum = animal.phylum || 'Unknown';
-            const classLevel = animal.class || 'Unknown';
-            const order = animal.order || 'Unknown';
-            const family = animal.family || 'Unknown';
-            const genus = animal.genus || 'Unknown';
-            const species = animal.scientificName || 'Unknown';
+        // Compare guessed animal with target
+        function compareWithTarget(guessedAnimal) {
+            const levels = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
+            let commonLevel = -1;
 
-            // Build tree structure
-            if (!taxonomyTree.kingdoms[kingdom]) {
-                taxonomyTree.kingdoms[kingdom] = { phylums: {} };
-            }
-            if (!taxonomyTree.kingdoms[kingdom].phylums[phylum]) {
-                taxonomyTree.kingdoms[kingdom].phylums[phylum] = { classes: {} };
-            }
-            if (!taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel]) {
-                taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel] = { orders: {} };
-            }
-            if (!taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order]) {
-                taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order] = { families: {} };
-            }
-            if (!taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order].families[family]) {
-                taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order].families[family] = { genera: {} };
-            }
-            if (!taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order].families[family].genera[genus]) {
-                taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order].families[family].genera[genus] = { species: [] };
+            // Always set kingdom to Animalia
+            revealedTree.kingdom = 'Animalia';
+
+            // Find deepest common level
+            for (let i = 0; i < levels.length; i++) {
+                const level = levels[i];
+                let guessValue, targetValue;
+
+                if (level === 'kingdom') {
+                    guessValue = 'Animalia';
+                    targetValue = 'Animalia';
+                } else if (level === 'species') {
+                    guessValue = guessedAnimal.scientificName;
+                    targetValue = targetAnimal.scientificName;
+                } else {
+                    guessValue = guessedAnimal[level];
+                    targetValue = targetAnimal[level];
+                }
+
+                if (guessValue && targetValue &&
+                    guessValue.toLowerCase() === targetValue.toLowerCase()) {
+                    commonLevel = i;
+
+                    // Add to revealed tree
+                    if (level !== 'kingdom') {
+                        revealedTree[level].add(guessValue);
+                    }
+                } else {
+                    break; // Stop at first divergence
+                }
             }
 
-            // Add species if not already there
-            const genusNode = taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order].families[family].genera[genus];
-            if (!genusNode.species.some(s => s.scientificName === species)) {
-                genusNode.species.push({
-                    scientificName: species,
-                    commonName: animal.commonName
-                });
+            // Update deepest level revealed
+            if (commonLevel > deepestLevel) {
+                deepestLevel = commonLevel;
             }
 
             renderTree();
+
+            const levelName = commonLevel >= 0 ? levels[commonLevel] : 'none';
+            showMessage(`Common ancestry: ${levelName.toUpperCase()}`,
+                commonLevel === 6 ? 'success' : 'info');
+
+            return levelName;
         }
 
-        // Render the taxonomy tree
+        // Render the tree
         function renderTree() {
             const treeDisplay = document.getElementById('treeDisplay');
 
-            if (discoveredAnimals.length === 0) {
+            if (!revealedTree.kingdom) {
                 treeDisplay.innerHTML = `
                     <div class="empty-tree">
                         <div class="empty-tree-icon">🌱</div>
-                        <div class="empty-tree-text">Start guessing to grow your tree!</div>
+                        <div class="empty-tree-text">Start guessing to reveal the tree!</div>
                     </div>
                 `;
                 return;
@@ -667,69 +764,124 @@
 
             let html = '';
 
-            // Render tree
-            for (const [kingdom, kingdomData] of Object.entries(taxonomyTree.kingdoms)) {
-                html += `<div class="tree-node level-0">`;
-                html += `<span class="tree-label kingdom" title="Kingdom">🦁 ${kingdom}</span>`;
+            // Kingdom (always Animalia)
+            html += `
+                <div class="tree-level">
+                    <div class="tree-nodes">
+                        <div>
+                            <div class="level-label">Kingdom</div>
+                            <div class="tree-node kingdom">Animalia</div>
+                        </div>
+                    </div>
+                </div>
+            `;
 
-                for (const [phylum, phylumData] of Object.entries(kingdomData.phylums)) {
-                    html += `<div class="tree-branch">`;
-                    html += `<div class="tree-node level-1">`;
-                    html += `<span class="tree-label phylum" title="Phylum">└─ ${phylum}</span>`;
+            if (deepestLevel >= 1 && revealedTree.phylum.size > 0) {
+                html += `<div class="tree-connector"></div>`;
+                html += `<div class="tree-level"><div class="tree-nodes">`;
+                revealedTree.phylum.forEach(phylum => {
+                    html += `
+                        <div>
+                            <div class="level-label">Phylum</div>
+                            <div class="tree-node phylum">${phylum}</div>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
+            }
 
-                    for (const [classLevel, classData] of Object.entries(phylumData.classes)) {
-                        html += `<div class="tree-branch">`;
-                        html += `<div class="tree-node level-2">`;
-                        html += `<span class="tree-label class" title="Class">└─ ${classLevel}</span>`;
+            if (deepestLevel >= 2 && revealedTree.class.size > 0) {
+                html += `<div class="tree-connector"></div>`;
+                html += `<div class="tree-level"><div class="tree-nodes">`;
+                revealedTree.class.forEach(cls => {
+                    html += `
+                        <div>
+                            <div class="level-label">Class</div>
+                            <div class="tree-node class">${cls}</div>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
+            }
 
-                        for (const [order, orderData] of Object.entries(classData.orders)) {
-                            html += `<div class="tree-branch">`;
-                            html += `<div class="tree-node level-3">`;
-                            html += `<span class="tree-label order" title="Order">└─ ${order}</span>`;
+            if (deepestLevel >= 3 && revealedTree.order.size > 0) {
+                html += `<div class="tree-connector"></div>`;
+                html += `<div class="tree-level"><div class="tree-nodes">`;
+                revealedTree.order.forEach(order => {
+                    html += `
+                        <div>
+                            <div class="level-label">Order</div>
+                            <div class="tree-node order">${order}</div>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
+            }
 
-                            for (const [family, familyData] of Object.entries(orderData.families)) {
-                                html += `<div class="tree-branch">`;
-                                html += `<div class="tree-node level-4">`;
-                                html += `<span class="tree-label family" title="Family">└─ ${family}</span>`;
+            if (deepestLevel >= 4 && revealedTree.family.size > 0) {
+                html += `<div class="tree-connector"></div>`;
+                html += `<div class="tree-level"><div class="tree-nodes">`;
+                revealedTree.family.forEach(family => {
+                    html += `
+                        <div>
+                            <div class="level-label">Family</div>
+                            <div class="tree-node family">${family}</div>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
+            }
 
-                                for (const [genus, genusData] of Object.entries(familyData.genera)) {
-                                    html += `<div class="tree-branch">`;
-                                    html += `<div class="tree-node level-5">`;
-                                    html += `<span class="tree-label genus" title="Genus">└─ ${genus}</span>`;
+            if (deepestLevel >= 5 && revealedTree.genus.size > 0) {
+                html += `<div class="tree-connector"></div>`;
+                html += `<div class="tree-level"><div class="tree-nodes">`;
+                revealedTree.genus.forEach(genus => {
+                    html += `
+                        <div>
+                            <div class="level-label">Genus</div>
+                            <div class="tree-node genus">${genus}</div>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
+            }
 
-                                    for (const speciesData of genusData.species) {
-                                        html += `<div class="tree-branch">`;
-                                        html += `<div class="tree-node level-6">`;
-                                        html += `<span class="tree-label species" title="${speciesData.scientificName}">└─ ${speciesData.commonName}</span>`;
-                                        html += `<span class="species-info">(${speciesData.scientificName})</span>`;
-                                        html += `</div></div>`;
-                                    }
-
-                                    html += `</div></div>`;
-                                }
-
-                                html += `</div></div>`;
-                            }
-
-                            html += `</div></div>`;
-                        }
-
-                        html += `</div></div>`;
-                    }
-
-                    html += `</div></div>`;
-                }
-
-                html += `</div>`;
+            if (deepestLevel >= 6 && revealedTree.species.size > 0) {
+                html += `<div class="tree-connector"></div>`;
+                html += `<div class="tree-level"><div class="tree-nodes">`;
+                revealedTree.species.forEach(species => {
+                    const isTarget = species === targetAnimal.scientificName;
+                    html += `
+                        <div>
+                            <div class="level-label">Species</div>
+                            <div class="tree-node ${isTarget ? 'target' : 'species'}">${species}</div>
+                        </div>
+                    `;
+                });
+                html += `</div></div>`;
             }
 
             treeDisplay.innerHTML = html;
         }
 
+        // Add to guess history
+        function addToGuessHistory(animal, commonLevel) {
+            const historyDiv = document.getElementById('guessHistory');
+            const item = document.createElement('div');
+            item.className = 'guess-item';
+            item.innerHTML = `
+                <div class="guess-item-name">${animal.commonName}</div>
+                <div class="guess-item-common">
+                    ${animal.scientificName} • Common to: ${commonLevel}
+                </div>
+            `;
+            historyDiv.insertBefore(item, historyDiv.firstChild);
+        }
+
         // Update statistics
         function updateStats() {
             document.getElementById('guessCount').textContent = `${guessCount} / ${maxGuesses}`;
-            document.getElementById('speciesCount').textContent = discoveredAnimals.length;
+            document.getElementById('pathDepth').textContent = `${deepestLevel} / 7`;
         }
 
         // Show message
@@ -742,8 +894,8 @@
             }, 3000);
         }
 
-        // End game
-        function endGame() {
+        // Win game
+        function winGame() {
             gameOver = true;
             guessInput.disabled = true;
             document.getElementById('guessBtn').disabled = true;
@@ -751,28 +903,31 @@
             const messageArea = document.getElementById('messageArea');
             messageArea.innerHTML = `
                 <div class="game-over">
-                    <h3>🎉 Game Complete!</h3>
-                    <p>You discovered <strong>${discoveredAnimals.length}</strong> species!</p>
-                    <p>Used all ${maxGuesses} guesses.</p>
-                    <button class="new-game-btn" onclick="resetGame()">Play Again</button>
+                    <h3>🎉 You Found It!</h3>
+                    <p><strong>${targetAnimal.commonName}</strong></p>
+                    <p><em>${targetAnimal.scientificName}</em></p>
+                    <p>Guessed in ${guessCount} ${guessCount === 1 ? 'try' : 'tries'}!</p>
+                    <button class="new-game-btn" onclick="startNewGame()">Play Again</button>
                 </div>
             `;
         }
 
-        // Reset game
-        function resetGame() {
-            discoveredAnimals = [];
-            guessCount = 0;
-            gameOver = false;
-            taxonomyTree.kingdoms = {};
+        // Lose game
+        function loseGame() {
+            gameOver = true;
+            guessInput.disabled = true;
+            document.getElementById('guessBtn').disabled = true;
 
-            guessInput.disabled = false;
-            document.getElementById('guessBtn').disabled = false;
-            document.getElementById('messageArea').innerHTML = '';
-
-            updateStats();
-            renderTree();
-            guessInput.focus();
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = `
+                <div class="game-over">
+                    <h3>Game Over!</h3>
+                    <p>The answer was:</p>
+                    <p><strong>${targetAnimal.commonName}</strong></p>
+                    <p><em>${targetAnimal.scientificName}</em></p>
+                    <button class="new-game-btn" onclick="startNewGame()">Try Again</button>
+                </div>
+            `;
         }
 
         // Initialize
