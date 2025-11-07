@@ -203,33 +203,70 @@
         }
 
         .tree-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 20px;
+            padding: 40px 20px;
             overflow-x: auto;
+            overflow-y: visible;
+            min-height: 600px;
         }
 
-        .tree-branch {
-            margin-left: 40px;
-            border-left: 3px solid #e0e0e0;
-            padding-left: 20px;
+        .tree-root {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .tree-level-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 60px;
+            margin: 40px 0;
             position: relative;
         }
 
-        .tree-branch::before {
-            content: '';
-            position: absolute;
-            left: -3px;
-            top: 20px;
-            width: 20px;
-            height: 3px;
-            background: #e0e0e0;
+        .tree-branch-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .tree-children {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            flex-wrap: wrap;
         }
 
         .tree-item {
-            margin: 8px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             position: relative;
+        }
+
+        .tree-node-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+            position: relative;
+        }
+
+        .tree-connector-line {
+            position: absolute;
+            top: -30px;
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, #52c234, #a8d530);
+        }
+
+        .tree-horizontal-line {
+            position: absolute;
+            top: -30px;
+            height: 2px;
+            background: linear-gradient(to right, #52c234, #a8d530);
         }
 
         .tree-node {
@@ -238,6 +275,7 @@
             border-radius: 8px;
             font-weight: 500;
             min-width: 100px;
+            text-align: center;
             position: relative;
             animation: fadeIn 0.5s ease-out;
             cursor: pointer;
@@ -447,15 +485,14 @@
         }
 
         .level-label {
-            display: inline-block;
-            font-size: 0.75em;
+            font-size: 0.7em;
             text-transform: uppercase;
             opacity: 0.7;
-            margin-right: 8px;
+            margin-bottom: 5px;
             letter-spacing: 0.5px;
             color: #666;
             font-weight: 600;
-            min-width: 60px;
+            text-align: center;
         }
 
         @media (max-width: 1024px) {
@@ -838,42 +875,51 @@
             return tree;
         }
 
-        // Render tree recursively
-        function renderTreeNode(node, levelIdx) {
+        // Render tree recursively with top-down branching
+        function renderTreeNode(node, levelIdx, isFirstChild = false) {
             const levelClasses = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
             const levelLabels = ['Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species'];
 
             const cssClass = levelClasses[levelIdx];
             const label = levelLabels[levelIdx];
 
-            let html = '<div class="tree-item">';
+            let html = '<div class="tree-branch-group">';
+
+            // Node itself
+            html += '<div class="tree-node-wrapper">';
+
+            // Connector line (except for root)
+            if (levelIdx > 0) {
+                html += '<div class="tree-connector-line"></div>';
+            }
+
+            html += '<div class="level-label">' + label + '</div>';
 
             if (node.mystery) {
-                html += `<span class="level-label">${label}:</span> `;
-                html += `<div class="tree-node mystery">???</div>`;
+                html += '<div class="tree-node mystery">???</div>';
             } else if (node.animal) {
                 // This is a species (leaf node)
                 const isTarget = node.animal.scientificName === targetAnimal.scientificName;
-                html += `<span class="level-label">${label}:</span> `;
                 html += `<div class="tree-node ${isTarget ? 'target' : cssClass}" title="${node.animal.scientificName}">
                     ${node.animal.commonName}
                 </div>`;
             } else {
-                html += `<span class="level-label">${label}:</span> `;
                 html += `<div class="tree-node ${cssClass}">${node.name}</div>`;
             }
+
+            html += '</div>'; // close tree-node-wrapper
 
             // Render children
             const children = Object.values(node.children);
             if (children.length > 0) {
-                html += '<div class="tree-branch">';
-                children.forEach(child => {
-                    html += renderTreeNode(child, child.levelIndex);
+                html += '<div class="tree-children">';
+                children.forEach((child, index) => {
+                    html += renderTreeNode(child, child.levelIndex, index === 0);
                 });
                 html += '</div>';
             }
 
-            html += '</div>';
+            html += '</div>'; // close tree-branch-group
             return html;
         }
 
@@ -892,13 +938,14 @@
             }
 
             const tree = buildTreeStructure();
-            let html = '';
+            let html = '<div class="tree-root">';
 
-            // Render from root
+            // Render from root (should only be Animalia)
             Object.values(tree).forEach(rootNode => {
                 html += renderTreeNode(rootNode, rootNode.levelIndex);
             });
 
+            html += '</div>';
             treeDisplay.innerHTML = html;
         }
 
