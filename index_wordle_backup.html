@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxonle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #52c234 0%, #a8d530 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d7a1f;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2d7a1f;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #52c234;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #52c234;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .autocomplete-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .autocomplete-item-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .autocomplete-item-scientific {
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            background: #52c234;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #3da328;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .guesses-section {
+            margin-top: 30px;
+        }
+
+        .guess-history {
+            margin-top: 20px;
+        }
+
+        .guess-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .guess-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .guess-scientific {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .taxonomy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .taxonomy-item {
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .taxonomy-item:hover {
+            transform: scale(1.05);
+        }
+
+        .taxonomy-label {
+            font-size: 0.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .taxonomy-value {
+            font-size: 0.9em;
+        }
+
+        .match {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .no-match {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .empty {
+            background: #e9ecef;
+            color: #6c757d;
+            border: 2px solid #adb5bd;
+        }
+
+        .message {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .message.win {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .message.lose {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .new-game-btn {
+            margin-top: 20px;
+            background: #28a745;
+        }
+
+        .new-game-btn:hover {
+            background: #218838;
+        }
+
+        .answer-reveal {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+        }
+
+        .answer-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .answer-scientific {
+            font-style: italic;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            color: #2d7a1f;
+        }
+
+        h2 {
+            color: #2d7a1f;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦁 Taxonle</h1>
+        <p class="subtitle">Guess the animal by its taxonomy!</p>
+
+        <div id="loading" class="loading">Loading animals...</div>
+
+        <div id="game" style="display: none;">
+            <div class="game-info">
+                <div class="info-item">
+                    <div class="info-label">Guesses</div>
+                    <div class="info-value" id="guessCount">0/6</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Animals</div>
+                    <div class="info-value" id="animalCount">0</div>
+                </div>
+            </div>
+
+            <div id="gameMessage"></div>
+
+            <div class="input-section">
+                <div class="search-wrapper">
+                    <input
+                        type="text"
+                        id="guessInput"
+                        placeholder="Enter common name or scientific name..."
+                        autocomplete="off"
+                    >
+                    <div id="autocompleteList" class="autocomplete-list"></div>
+                </div>
+                <button id="guessBtn" onclick="makeGuess()">Submit Guess</button>
+            </div>
+
+            <div class="guesses-section">
+                <h2>Your Guesses</h2>
+                <div id="guessHistory" class="guess-history"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let animals = [];
+        let targetAnimal = null;
+        let guesses = [];
+        const maxGuesses = 6;
+        let gameOver = false;
+
+        // Load the animals data
+        async function loadAnimals() {
+            try {
+                const response = await fetch('animals_data.json');
+                animals = await response.json();
+                document.getElementById('animalCount').textContent = animals.length;
+                startNewGame();
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('game').style.display = 'block';
+            } catch (error) {
+                document.getElementById('loading').textContent = 'Error loading animals data. Please refresh the page.';
+                console.error('Error loading animals:', error);
+            }
+        }
+
+        // Start a new game
+        function startNewGame() {
+            targetAnimal = animals[Math.floor(Math.random() * animals.length)];
+            guesses = [];
+            gameOver = false;
+            updateGuessCount();
+            document.getElementById('guessHistory').innerHTML = '';
+            document.getElementById('gameMessage').innerHTML = '';
+            document.getElementById('guessInput').value = '';
+            document.getElementById('guessInput').disabled = false;
+            document.getElementById('guessBtn').disabled = false;
+            console.log('Target animal:', targetAnimal); // For debugging
+        }
+
+        // Autocomplete functionality
+        const guessInput = document.getElementById('guessInput');
+        const autocompleteList = document.getElementById('autocompleteList');
+
+        guessInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+
+            if (searchTerm.length < 2) {
+                autocompleteList.style.display = 'none';
+                return;
+            }
+
+            const matches = animals.filter(animal =>
+                animal.commonName.toLowerCase().includes(searchTerm) ||
+                animal.scientificName.toLowerCase().includes(searchTerm)
+            ).slice(0, 10); // Limit to 10 suggestions
+
+            if (matches.length > 0) {
+                autocompleteList.innerHTML = matches.map(animal => `
+                    <div class="autocomplete-item" onclick="selectAnimal('${animal.commonName.replace(/'/g, "\\'")}')">
+                        <div class="autocomplete-item-name">${animal.commonName}</div>
+                        <div class="autocomplete-item-scientific">${animal.scientificName}</div>
+                    </div>
+                `).join('');
+                autocompleteList.style.display = 'block';
+            } else {
+                autocompleteList.style.display = 'none';
+            }
+        });
+
+        // Close autocomplete when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-wrapper')) {
+                autocompleteList.style.display = 'none';
+            }
+        });
+
+        // Select an animal from autocomplete
+        function selectAnimal(name) {
+            guessInput.value = name;
+            autocompleteList.style.display = 'none';
+        }
+
+        // Handle Enter key
+        guessInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                makeGuess();
+            }
+        });
+
+        // Update guess count display
+        function updateGuessCount() {
+            document.getElementById('guessCount').textContent = `${guesses.length}/${maxGuesses}`;
+        }
+
+        // Make a guess
+        function makeGuess() {
+            if (gameOver) return;
+
+            const input = guessInput.value.trim();
+            if (!input) {
+                alert('Please enter an animal name!');
+                return;
+            }
+
+            // Find the animal in the dataset
+            const guessedAnimal = animals.find(animal =>
+                animal.commonName.toLowerCase() === input.toLowerCase() ||
+                animal.scientificName.toLowerCase() === input.toLowerCase()
+            );
+
+            if (!guessedAnimal) {
+                alert('Animal not found in the database. Please try another name or use autocomplete.');
+                return;
+            }
+
+            // Check if already guessed
+            if (guesses.some(g => g.commonName === guessedAnimal.commonName)) {
+                alert('You already guessed this animal!');
+                return;
+            }
+
+            // Add to guesses
+            guesses.push(guessedAnimal);
+            updateGuessCount();
+
+            // Display the guess with taxonomy comparison
+            displayGuess(guessedAnimal);
+
+            // Check if won
+            if (guessedAnimal.commonName === targetAnimal.commonName) {
+                endGame(true);
+                return;
+            }
+
+            // Check if lost
+            if (guesses.length >= maxGuesses) {
+                endGame(false);
+                return;
+            }
+
+            // Clear input
+            guessInput.value = '';
+            guessInput.focus();
+        }
+
+        // Display a guess with taxonomy comparison
+        function displayGuess(guessedAnimal) {
+            const taxonomyLevels = [
+                { key: 'phylum', label: 'Phylum' },
+                { key: 'class', label: 'Class' },
+                { key: 'order', label: 'Order' },
+                { key: 'family', label: 'Family' },
+                { key: 'genus', label: 'Genus' }
+            ];
+
+            const taxonomyHTML = taxonomyLevels.map(level => {
+                const guessValue = guessedAnimal[level.key] || '';
+                const targetValue = targetAnimal[level.key] || '';
+
+                let cssClass = 'empty';
+                if (guessValue && targetValue) {
+                    cssClass = guessValue.toLowerCase() === targetValue.toLowerCase() ? 'match' : 'no-match';
+                }
+
+                return `
+                    <div class="taxonomy-item ${cssClass}">
+                        <div class="taxonomy-label">${level.label}</div>
+                        <div class="taxonomy-value">${guessValue || '—'}</div>
+                    </div>
+                `;
+            }).join('');
+
+            const guessHTML = `
+                <div class="guess-item">
+                    <div class="guess-name">${guessedAnimal.commonName}</div>
+                    <div class="guess-scientific">${guessedAnimal.scientificName}</div>
+                    <div class="taxonomy-grid">
+                        ${taxonomyHTML}
+                    </div>
+                </div>
+            `;
+
+            // Prepend (add to top) instead of append
+            const guessHistory = document.getElementById('guessHistory');
+            guessHistory.insertAdjacentHTML('afterbegin', guessHTML);
+        }
+
+        // End the game
+        function endGame(won) {
+            gameOver = true;
+            guessInput.disabled = true;
+            document.getElementById('guessBtn').disabled = true;
+
+            const messageDiv = document.getElementById('gameMessage');
+
+            if (won) {
+                messageDiv.innerHTML = `
+                    <div class="message win">
+                        🎉 Congratulations! You guessed it in ${guesses.length} ${guesses.length === 1 ? 'try' : 'tries'}!
+                    </div>
+                    <button class="new-game-btn" onclick="startNewGame()">Play Again</button>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="message lose">
+                        😔 Game Over! You've used all ${maxGuesses} guesses.
+                    </div>
+                    <div class="answer-reveal">
+                        <div style="margin-bottom: 10px; color: #856404;">The answer was:</div>
+                        <div class="answer-name">${targetAnimal.commonName}</div>
+                        <div class="answer-scientific">${targetAnimal.scientificName}</div>
+                    </div>
+                    <button class="new-game-btn" onclick="startNewGame()">Try Again</button>
+                `;
+            }
+        }
+
+        // Initialize the game when page loads
+        loadAnimals();
+    </script>
+</body>
+</html>

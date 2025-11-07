@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taxonle</title>
+    <title>Taxonle - Discover the Animal Kingdom</title>
     <style>
         * {
             margin: 0;
@@ -15,75 +15,90 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #52c234 0%, #a8d530 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 800px;
-            width: 100%;
-            padding: 40px;
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
         }
 
-        h1 {
-            text-align: center;
-            color: #2d7a1f;
-            margin-bottom: 10px;
+        .header h1 {
             font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
         }
 
-        .game-info {
+        .game-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+
+        .left-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .stats {
+            margin-bottom: 25px;
+        }
+
+        .stat-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
         }
 
-        .info-item {
-            text-align: center;
+        .stat-item:last-child {
+            border-bottom: none;
         }
 
-        .info-label {
+        .stat-label {
+            font-weight: 600;
             color: #666;
-            font-size: 0.9em;
-            margin-bottom: 5px;
         }
 
-        .info-value {
-            font-size: 1.5em;
+        .stat-value {
             font-weight: bold;
+            font-size: 1.2em;
             color: #2d7a1f;
         }
 
         .input-section {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+        }
+
+        .input-section h3 {
+            color: #2d7a1f;
+            margin-bottom: 15px;
         }
 
         .search-wrapper {
             position: relative;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         input[type="text"] {
             width: 100%;
-            padding: 15px;
-            font-size: 1.1em;
+            padding: 12px;
+            font-size: 1em;
             border: 2px solid #ddd;
-            border-radius: 10px;
+            border-radius: 8px;
             transition: border-color 0.3s;
         }
 
@@ -100,21 +115,23 @@
             background: white;
             border: 2px solid #52c234;
             border-top: none;
-            border-radius: 0 0 10px 10px;
-            max-height: 200px;
+            border-radius: 0 0 8px 8px;
+            max-height: 250px;
             overflow-y: auto;
             z-index: 1000;
             display: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .autocomplete-item {
-            padding: 10px 15px;
+            padding: 10px 12px;
             cursor: pointer;
             transition: background-color 0.2s;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .autocomplete-item:hover {
-            background-color: #f0f0f0;
+            background-color: #f0fff0;
         }
 
         .autocomplete-item-name {
@@ -123,19 +140,20 @@
         }
 
         .autocomplete-item-scientific {
-            font-size: 0.9em;
+            font-size: 0.85em;
             color: #666;
             font-style: italic;
+            margin-top: 2px;
         }
 
         button {
             width: 100%;
-            padding: 15px;
-            font-size: 1.1em;
+            padding: 12px;
+            font-size: 1em;
             background: #52c234;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: background-color 0.3s;
             font-weight: bold;
@@ -150,26 +168,134 @@
             cursor: not-allowed;
         }
 
-        .guesses-section {
-            margin-top: 30px;
-        }
-
-        .guess-history {
-            margin-top: 20px;
-        }
-
-        .guess-item {
+        .instructions {
             background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 15px;
-            animation: slideIn 0.3s ease-out;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            line-height: 1.6;
         }
 
-        @keyframes slideIn {
+        .instructions h4 {
+            color: #2d7a1f;
+            margin-bottom: 10px;
+        }
+
+        .tree-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            min-height: 600px;
+            overflow-x: auto;
+        }
+
+        .tree-header {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #52c234;
+        }
+
+        .tree-header h2 {
+            color: #2d7a1f;
+            font-size: 1.8em;
+        }
+
+        .taxonomy-tree {
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+
+        .tree-node {
+            margin-left: 20px;
+            position: relative;
+        }
+
+        .tree-node.level-0 { margin-left: 0; }
+        .tree-node.level-1 { margin-left: 25px; }
+        .tree-node.level-2 { margin-left: 50px; }
+        .tree-node.level-3 { margin-left: 75px; }
+        .tree-node.level-4 { margin-left: 100px; }
+        .tree-node.level-5 { margin-left: 125px; }
+        .tree-node.level-6 { margin-left: 150px; }
+
+        .tree-label {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 3px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .tree-label:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .tree-label.kingdom { background: #ffebee; color: #c62828; font-weight: bold; }
+        .tree-label.phylum { background: #fce4ec; color: #ad1457; }
+        .tree-label.class { background: #f3e5f5; color: #6a1b9a; }
+        .tree-label.order { background: #e8eaf6; color: #283593; }
+        .tree-label.family { background: #e3f2fd; color: #0277bd; }
+        .tree-label.genus { background: #e0f2f1; color: #00695c; }
+        .tree-label.species { background: #e8f5e9; color: #2e7d32; font-weight: bold; }
+
+        .tree-branch {
+            border-left: 2px solid #ddd;
+            margin-left: 10px;
+            padding-left: 15px;
+        }
+
+        .species-info {
+            font-size: 0.85em;
+            color: #666;
+            font-style: italic;
+            margin-left: 10px;
+        }
+
+        .empty-tree {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-tree-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .empty-tree-text {
+            font-size: 1.2em;
+        }
+
+        .message {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
             }
             to {
                 opacity: 1;
@@ -177,206 +303,205 @@
             }
         }
 
-        .guess-name {
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #333;
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
         }
 
-        .guess-scientific {
-            font-style: italic;
-            color: #666;
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #dc3545;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #17a2b8;
+        }
+
+        .game-over {
+            text-align: center;
+            padding: 30px;
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .game-over h3 {
+            color: #856404;
+            font-size: 1.5em;
             margin-bottom: 15px;
         }
 
-        .taxonomy-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 10px;
-        }
-
-        .taxonomy-item {
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            transition: transform 0.2s;
-        }
-
-        .taxonomy-item:hover {
-            transform: scale(1.05);
-        }
-
-        .taxonomy-label {
-            font-size: 0.8em;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-            opacity: 0.8;
-        }
-
-        .taxonomy-value {
-            font-size: 0.9em;
-        }
-
-        .match {
-            background: #d4edda;
-            color: #155724;
-            border: 2px solid #28a745;
-        }
-
-        .no-match {
-            background: #f8d7da;
-            color: #721c24;
-            border: 2px solid #dc3545;
-        }
-
-        .empty {
-            background: #e9ecef;
-            color: #6c757d;
-            border: 2px solid #adb5bd;
-        }
-
-        .message {
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            text-align: center;
-            font-size: 1.2em;
-            font-weight: bold;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .message.win {
-            background: #d4edda;
-            color: #155724;
-            border: 2px solid #28a745;
-        }
-
-        .message.lose {
-            background: #f8d7da;
-            color: #721c24;
-            border: 2px solid #dc3545;
-        }
-
         .new-game-btn {
-            margin-top: 20px;
             background: #28a745;
+            margin-top: 15px;
         }
 
         .new-game-btn:hover {
             background: #218838;
         }
 
-        .answer-reveal {
-            margin-top: 15px;
-            padding: 15px;
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 10px;
-        }
-
-        .answer-name {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .answer-scientific {
-            font-style: italic;
-            color: #666;
-        }
-
         .loading {
             text-align: center;
             padding: 40px;
             font-size: 1.2em;
-            color: #2d7a1f;
+            color: white;
         }
 
-        h2 {
-            color: #2d7a1f;
-            margin-bottom: 10px;
-            font-size: 1.5em;
+        .legend {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+            font-size: 0.85em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 1024px) {
+            .game-container {
+                grid-template-columns: 1fr;
+            }
+
+            .left-panel {
+                position: relative;
+                top: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🦁 Taxonle</h1>
-        <p class="subtitle">Guess the animal by its taxonomy!</p>
+    <div class="header">
+        <h1>🌿 Taxonle</h1>
+        <p class="subtitle">Discover and build the tree of life!</p>
+    </div>
 
-        <div id="loading" class="loading">Loading animals...</div>
+    <div id="loading" class="loading">Loading animal kingdom...</div>
 
-        <div id="game" style="display: none;">
-            <div class="game-info">
-                <div class="info-item">
-                    <div class="info-label">Guesses</div>
-                    <div class="info-value" id="guessCount">0/6</div>
+    <div id="gameContainer" class="game-container" style="display: none;">
+        <div class="left-panel">
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-label">Guesses Used</span>
+                    <span class="stat-value" id="guessCount">0 / 20</span>
                 </div>
-                <div class="info-item">
-                    <div class="info-label">Animals</div>
-                    <div class="info-value" id="animalCount">0</div>
+                <div class="stat-item">
+                    <span class="stat-label">Species Found</span>
+                    <span class="stat-value" id="speciesCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Database Size</span>
+                    <span class="stat-value" id="totalAnimals">0</span>
                 </div>
             </div>
 
-            <div id="gameMessage"></div>
+            <div id="messageArea"></div>
 
             <div class="input-section">
+                <h3>Guess an Animal</h3>
                 <div class="search-wrapper">
                     <input
                         type="text"
                         id="guessInput"
-                        placeholder="Enter common name or scientific name..."
+                        placeholder="Enter common or scientific name..."
                         autocomplete="off"
                     >
                     <div id="autocompleteList" class="autocomplete-list"></div>
                 </div>
-                <button id="guessBtn" onclick="makeGuess()">Submit Guess</button>
+                <button id="guessBtn" onclick="makeGuess()">Add to Tree</button>
             </div>
 
-            <div class="guesses-section">
-                <h2>Your Guesses</h2>
-                <div id="guessHistory" class="guess-history"></div>
+            <div class="instructions">
+                <h4>How to Play</h4>
+                <p>• Guess any animal species by name</p>
+                <p>• Each correct guess reveals its taxonomic branch</p>
+                <p>• Build the tree with 20 guesses</p>
+                <p>• Discover as many species as possible!</p>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #ffebee;"></div>
+                        <span>Kingdom</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #fce4ec;"></div>
+                        <span>Phylum</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f3e5f5;"></div>
+                        <span>Class</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e8eaf6;"></div>
+                        <span>Order</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e3f2fd;"></div>
+                        <span>Family</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e0f2f1;"></div>
+                        <span>Genus</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e8f5e9;"></div>
+                        <span>Species</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tree-panel">
+            <div class="tree-header">
+                <h2>Taxonomy Tree</h2>
+            </div>
+            <div id="treeDisplay" class="taxonomy-tree">
+                <div class="empty-tree">
+                    <div class="empty-tree-icon">🌱</div>
+                    <div class="empty-tree-text">Start guessing to grow your tree!</div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         let animals = [];
-        let targetAnimal = null;
-        let guesses = [];
-        const maxGuesses = 6;
+        let discoveredAnimals = [];
+        let guessCount = 0;
+        const maxGuesses = 20;
         let gameOver = false;
 
-        // Load the animals data
+        // Taxonomy tree structure
+        const taxonomyTree = {
+            kingdoms: {}
+        };
+
+        // Load animals data
         async function loadAnimals() {
             try {
                 const response = await fetch('animals_data.json');
                 animals = await response.json();
-                document.getElementById('animalCount').textContent = animals.length;
-                startNewGame();
+                document.getElementById('totalAnimals').textContent = animals.length;
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('game').style.display = 'block';
+                document.getElementById('gameContainer').style.display = 'grid';
             } catch (error) {
-                document.getElementById('loading').textContent = 'Error loading animals data. Please refresh the page.';
+                document.getElementById('loading').textContent = 'Error loading data. Please refresh.';
                 console.error('Error loading animals:', error);
             }
-        }
-
-        // Start a new game
-        function startNewGame() {
-            targetAnimal = animals[Math.floor(Math.random() * animals.length)];
-            guesses = [];
-            gameOver = false;
-            updateGuessCount();
-            document.getElementById('guessHistory').innerHTML = '';
-            document.getElementById('gameMessage').innerHTML = '';
-            document.getElementById('guessInput').value = '';
-            document.getElementById('guessInput').disabled = false;
-            document.getElementById('guessBtn').disabled = false;
-            console.log('Target animal:', targetAnimal); // For debugging
         }
 
         // Autocomplete functionality
@@ -391,16 +516,18 @@
                 return;
             }
 
-            const matches = animals.filter(animal =>
-                animal.commonName.toLowerCase().includes(searchTerm) ||
-                animal.scientificName.toLowerCase().includes(searchTerm)
-            ).slice(0, 10); // Limit to 10 suggestions
+            const matches = animals
+                .filter(animal =>
+                    animal.commonName.toLowerCase().includes(searchTerm) ||
+                    animal.scientificName.toLowerCase().includes(searchTerm)
+                )
+                .slice(0, 15);
 
             if (matches.length > 0) {
                 autocompleteList.innerHTML = matches.map(animal => `
-                    <div class="autocomplete-item" onclick="selectAnimal('${animal.commonName.replace(/'/g, "\\'")}')">
-                        <div class="autocomplete-item-name">${animal.commonName}</div>
-                        <div class="autocomplete-item-scientific">${animal.scientificName}</div>
+                    <div class="autocomplete-item" onclick="selectAnimal('${escapeHtml(animal.commonName)}')">
+                        <div class="autocomplete-item-name">${escapeHtml(animal.commonName)}</div>
+                        <div class="autocomplete-item-scientific">${escapeHtml(animal.scientificName)}</div>
                     </div>
                 `).join('');
                 autocompleteList.style.display = 'block';
@@ -409,29 +536,27 @@
             }
         });
 
-        // Close autocomplete when clicking outside
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.search-wrapper')) {
                 autocompleteList.style.display = 'none';
             }
         });
 
-        // Select an animal from autocomplete
         function selectAnimal(name) {
             guessInput.value = name;
             autocompleteList.style.display = 'none';
         }
 
-        // Handle Enter key
         guessInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 makeGuess();
             }
         });
 
-        // Update guess count display
-        function updateGuessCount() {
-            document.getElementById('guessCount').textContent = `${guesses.length}/${maxGuesses}`;
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // Make a guess
@@ -440,124 +565,217 @@
 
             const input = guessInput.value.trim();
             if (!input) {
-                alert('Please enter an animal name!');
+                showMessage('Please enter an animal name!', 'error');
                 return;
             }
 
-            // Find the animal in the dataset
-            const guessedAnimal = animals.find(animal =>
-                animal.commonName.toLowerCase() === input.toLowerCase() ||
-                animal.scientificName.toLowerCase() === input.toLowerCase()
+            // Find the animal
+            const animal = animals.find(a =>
+                a.commonName.toLowerCase() === input.toLowerCase() ||
+                a.scientificName.toLowerCase() === input.toLowerCase()
             );
 
-            if (!guessedAnimal) {
-                alert('Animal not found in the database. Please try another name or use autocomplete.');
+            if (!animal) {
+                showMessage('Animal not found in database. Try autocomplete!', 'error');
                 return;
             }
 
-            // Check if already guessed
-            if (guesses.some(g => g.commonName === guessedAnimal.commonName)) {
-                alert('You already guessed this animal!');
+            // Check if already discovered
+            if (discoveredAnimals.some(a => a.scientificName === animal.scientificName)) {
+                showMessage('You already discovered this species!', 'info');
                 return;
             }
 
-            // Add to guesses
-            guesses.push(guessedAnimal);
-            updateGuessCount();
+            // Add to discovered
+            discoveredAnimals.push(animal);
+            guessCount++;
 
-            // Display the guess with taxonomy comparison
-            displayGuess(guessedAnimal);
+            // Add to tree
+            addToTree(animal);
 
-            // Check if won
-            if (guessedAnimal.commonName === targetAnimal.commonName) {
-                endGame(true);
-                return;
-            }
+            // Update stats
+            updateStats();
 
-            // Check if lost
-            if (guesses.length >= maxGuesses) {
-                endGame(false);
-                return;
-            }
+            // Show success message
+            showMessage(`✓ Added: ${animal.commonName} (${animal.scientificName})`, 'success');
 
             // Clear input
             guessInput.value = '';
             guessInput.focus();
+
+            // Check game over
+            if (guessCount >= maxGuesses) {
+                endGame();
+            }
         }
 
-        // Display a guess with taxonomy comparison
-        function displayGuess(guessedAnimal) {
-            const taxonomyLevels = [
-                { key: 'phylum', label: 'Phylum' },
-                { key: 'class', label: 'Class' },
-                { key: 'order', label: 'Order' },
-                { key: 'family', label: 'Family' },
-                { key: 'genus', label: 'Genus' }
-            ];
+        // Add animal to taxonomy tree
+        function addToTree(animal) {
+            const kingdom = 'Animalia';
+            const phylum = animal.phylum || 'Unknown';
+            const classLevel = animal.class || 'Unknown';
+            const order = animal.order || 'Unknown';
+            const family = animal.family || 'Unknown';
+            const genus = animal.genus || 'Unknown';
+            const species = animal.scientificName || 'Unknown';
 
-            const taxonomyHTML = taxonomyLevels.map(level => {
-                const guessValue = guessedAnimal[level.key] || '';
-                const targetValue = targetAnimal[level.key] || '';
+            // Build tree structure
+            if (!taxonomyTree.kingdoms[kingdom]) {
+                taxonomyTree.kingdoms[kingdom] = { phylums: {} };
+            }
+            if (!taxonomyTree.kingdoms[kingdom].phylums[phylum]) {
+                taxonomyTree.kingdoms[kingdom].phylums[phylum] = { classes: {} };
+            }
+            if (!taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel]) {
+                taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel] = { orders: {} };
+            }
+            if (!taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order]) {
+                taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order] = { families: {} };
+            }
+            if (!taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order].families[family]) {
+                taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order].families[family] = { genera: {} };
+            }
+            if (!taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order].families[family].genera[genus]) {
+                taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order].families[family].genera[genus] = { species: [] };
+            }
 
-                let cssClass = 'empty';
-                if (guessValue && targetValue) {
-                    cssClass = guessValue.toLowerCase() === targetValue.toLowerCase() ? 'match' : 'no-match';
-                }
+            // Add species if not already there
+            const genusNode = taxonomyTree.kingdoms[kingdom].phylums[phylum].classes[classLevel].orders[order].families[family].genera[genus];
+            if (!genusNode.species.some(s => s.scientificName === species)) {
+                genusNode.species.push({
+                    scientificName: species,
+                    commonName: animal.commonName
+                });
+            }
 
-                return `
-                    <div class="taxonomy-item ${cssClass}">
-                        <div class="taxonomy-label">${level.label}</div>
-                        <div class="taxonomy-value">${guessValue || '—'}</div>
+            renderTree();
+        }
+
+        // Render the taxonomy tree
+        function renderTree() {
+            const treeDisplay = document.getElementById('treeDisplay');
+
+            if (discoveredAnimals.length === 0) {
+                treeDisplay.innerHTML = `
+                    <div class="empty-tree">
+                        <div class="empty-tree-icon">🌱</div>
+                        <div class="empty-tree-text">Start guessing to grow your tree!</div>
                     </div>
                 `;
-            }).join('');
+                return;
+            }
 
-            const guessHTML = `
-                <div class="guess-item">
-                    <div class="guess-name">${guessedAnimal.commonName}</div>
-                    <div class="guess-scientific">${guessedAnimal.scientificName}</div>
-                    <div class="taxonomy-grid">
-                        ${taxonomyHTML}
-                    </div>
-                </div>
-            `;
+            let html = '';
 
-            // Prepend (add to top) instead of append
-            const guessHistory = document.getElementById('guessHistory');
-            guessHistory.insertAdjacentHTML('afterbegin', guessHTML);
+            // Render tree
+            for (const [kingdom, kingdomData] of Object.entries(taxonomyTree.kingdoms)) {
+                html += `<div class="tree-node level-0">`;
+                html += `<span class="tree-label kingdom" title="Kingdom">🦁 ${kingdom}</span>`;
+
+                for (const [phylum, phylumData] of Object.entries(kingdomData.phylums)) {
+                    html += `<div class="tree-branch">`;
+                    html += `<div class="tree-node level-1">`;
+                    html += `<span class="tree-label phylum" title="Phylum">└─ ${phylum}</span>`;
+
+                    for (const [classLevel, classData] of Object.entries(phylumData.classes)) {
+                        html += `<div class="tree-branch">`;
+                        html += `<div class="tree-node level-2">`;
+                        html += `<span class="tree-label class" title="Class">└─ ${classLevel}</span>`;
+
+                        for (const [order, orderData] of Object.entries(classData.orders)) {
+                            html += `<div class="tree-branch">`;
+                            html += `<div class="tree-node level-3">`;
+                            html += `<span class="tree-label order" title="Order">└─ ${order}</span>`;
+
+                            for (const [family, familyData] of Object.entries(orderData.families)) {
+                                html += `<div class="tree-branch">`;
+                                html += `<div class="tree-node level-4">`;
+                                html += `<span class="tree-label family" title="Family">└─ ${family}</span>`;
+
+                                for (const [genus, genusData] of Object.entries(familyData.genera)) {
+                                    html += `<div class="tree-branch">`;
+                                    html += `<div class="tree-node level-5">`;
+                                    html += `<span class="tree-label genus" title="Genus">└─ ${genus}</span>`;
+
+                                    for (const speciesData of genusData.species) {
+                                        html += `<div class="tree-branch">`;
+                                        html += `<div class="tree-node level-6">`;
+                                        html += `<span class="tree-label species" title="${speciesData.scientificName}">└─ ${speciesData.commonName}</span>`;
+                                        html += `<span class="species-info">(${speciesData.scientificName})</span>`;
+                                        html += `</div></div>`;
+                                    }
+
+                                    html += `</div></div>`;
+                                }
+
+                                html += `</div></div>`;
+                            }
+
+                            html += `</div></div>`;
+                        }
+
+                        html += `</div></div>`;
+                    }
+
+                    html += `</div></div>`;
+                }
+
+                html += `</div>`;
+            }
+
+            treeDisplay.innerHTML = html;
         }
 
-        // End the game
-        function endGame(won) {
+        // Update statistics
+        function updateStats() {
+            document.getElementById('guessCount').textContent = `${guessCount} / ${maxGuesses}`;
+            document.getElementById('speciesCount').textContent = discoveredAnimals.length;
+        }
+
+        // Show message
+        function showMessage(text, type = 'info') {
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = `<div class="message ${type}">${text}</div>`;
+
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 3000);
+        }
+
+        // End game
+        function endGame() {
             gameOver = true;
             guessInput.disabled = true;
             document.getElementById('guessBtn').disabled = true;
 
-            const messageDiv = document.getElementById('gameMessage');
-
-            if (won) {
-                messageDiv.innerHTML = `
-                    <div class="message win">
-                        🎉 Congratulations! You guessed it in ${guesses.length} ${guesses.length === 1 ? 'try' : 'tries'}!
-                    </div>
-                    <button class="new-game-btn" onclick="startNewGame()">Play Again</button>
-                `;
-            } else {
-                messageDiv.innerHTML = `
-                    <div class="message lose">
-                        😔 Game Over! You've used all ${maxGuesses} guesses.
-                    </div>
-                    <div class="answer-reveal">
-                        <div style="margin-bottom: 10px; color: #856404;">The answer was:</div>
-                        <div class="answer-name">${targetAnimal.commonName}</div>
-                        <div class="answer-scientific">${targetAnimal.scientificName}</div>
-                    </div>
-                    <button class="new-game-btn" onclick="startNewGame()">Try Again</button>
-                `;
-            }
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = `
+                <div class="game-over">
+                    <h3>🎉 Game Complete!</h3>
+                    <p>You discovered <strong>${discoveredAnimals.length}</strong> species!</p>
+                    <p>Used all ${maxGuesses} guesses.</p>
+                    <button class="new-game-btn" onclick="resetGame()">Play Again</button>
+                </div>
+            `;
         }
 
-        // Initialize the game when page loads
+        // Reset game
+        function resetGame() {
+            discoveredAnimals = [];
+            guessCount = 0;
+            gameOver = false;
+            taxonomyTree.kingdoms = {};
+
+            guessInput.disabled = false;
+            document.getElementById('guessBtn').disabled = false;
+            document.getElementById('messageArea').innerHTML = '';
+
+            updateStats();
+            renderTree();
+            guessInput.focus();
+        }
+
+        // Initialize
         loadAnimals();
     </script>
 </body>
