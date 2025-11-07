@@ -608,6 +608,28 @@
             background: #5a6268;
         }
 
+        .hint-box {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .hint-box h4 {
+            color: #0c5460;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        .hint-box p {
+            color: #0c5460;
+            margin: 0;
+            line-height: 1.5;
+        }
+
         @media (max-width: 1024px) {
             .game-container {
                 grid-template-columns: 1fr;
@@ -659,11 +681,16 @@
                     <div id="autocompleteList" class="autocomplete-list"></div>
                 </div>
                 <button id="guessBtn" onclick="makeGuess()">Submit Guess</button>
+                <button id="hintBtn" onclick="showHint()" style="background: #17a2b8; margin-top: 10px;">
+                    💡 Hint (Locked)
+                </button>
                 <div class="button-group">
                     <button id="retryBtn" onclick="startNewGame()" style="background: #ffa500;">New Game</button>
                     <button id="giveUpBtn" onclick="giveUp()" style="background: #dc3545;">Give Up</button>
                 </div>
             </div>
+
+            <div id="hintsArea" style="margin-top: 20px;"></div>
 
             <div class="instructions">
                 <h4>How to Play</h4>
@@ -733,6 +760,10 @@
         let disabledPaths = new Set();
         let pendingDisabledPaths = new Set();
 
+        // Hint system
+        let hintsUsed = 0;
+        const maxHints = 2;
+
         // Load animals data
         async function loadAnimals() {
             try {
@@ -778,7 +809,69 @@
             document.getElementById('giveUpBtn').disabled = false;
             document.getElementById('retryBtn').disabled = false;
 
+            // Reset hints
+            hintsUsed = 0;
+            document.getElementById('hintsArea').innerHTML = '';
+            updateHintButton();
+
             console.log('Target:', targetAnimal);
+        }
+
+        // Update hint button state
+        function updateHintButton() {
+            const hintBtn = document.getElementById('hintBtn');
+            const availableHints = Math.floor(guessCount / 5);
+            const hintsAvailable = Math.min(availableHints, maxHints) - hintsUsed;
+
+            if (hintsAvailable > 0 && !gameOver) {
+                hintBtn.textContent = `💡 Hint (${hintsAvailable} available)`;
+                hintBtn.disabled = false;
+                hintBtn.style.opacity = '1';
+            } else if (hintsUsed >= maxHints) {
+                hintBtn.textContent = '💡 No more hints';
+                hintBtn.disabled = true;
+                hintBtn.style.opacity = '0.5';
+            } else {
+                const nextHintAt = (Math.floor(hintsUsed / 1) + 1) * 5;
+                hintBtn.textContent = `💡 Hint (Next at ${nextHintAt} guesses)`;
+                hintBtn.disabled = true;
+                hintBtn.style.opacity = '0.5';
+            }
+        }
+
+        // Show hint
+        function showHint() {
+            if (gameOver) return;
+
+            const availableHints = Math.floor(guessCount / 5);
+            if (hintsUsed >= availableHints || hintsUsed >= maxHints) {
+                return;
+            }
+
+            const hintsArea = document.getElementById('hintsArea');
+
+            if (hintsUsed === 0) {
+                // First hint: Threat Status
+                const hintBox = document.createElement('div');
+                hintBox.className = 'hint-box';
+                hintBox.innerHTML = `
+                    <h4>Hint 1: Conservation Status</h4>
+                    <p>${targetAnimal.threatStatus || 'Unknown'}</p>
+                `;
+                hintsArea.appendChild(hintBox);
+            } else if (hintsUsed === 1) {
+                // Second hint: Distribution
+                const hintBox = document.createElement('div');
+                hintBox.className = 'hint-box';
+                hintBox.innerHTML = `
+                    <h4>Hint 2: Geographic Distribution</h4>
+                    <p>${targetAnimal.distribution || 'Unknown'}</p>
+                `;
+                hintsArea.appendChild(hintBox);
+            }
+
+            hintsUsed++;
+            updateHintButton();
         }
 
         // Autocomplete functionality
@@ -873,6 +966,9 @@
             // Update stats
             updateStats();
 
+            // Update hint button
+            updateHintButton();
+
             // Check if won
             if (animal.scientificName === targetAnimal.scientificName) {
                 winGame();
@@ -935,9 +1031,6 @@
             renderTree();
 
             const levelName = commonLevel >= 0 ? levels[commonLevel] : 'none';
-            showMessage(`Common ancestry: ${levelName.toUpperCase()}`,
-                commonLevel === 6 ? 'success' : 'info');
-
             return levelName;
         }
 
@@ -1220,6 +1313,7 @@
             document.getElementById('guessBtn').disabled = true;
             document.getElementById('giveUpBtn').disabled = true;
             document.getElementById('retryBtn').disabled = true;
+            document.getElementById('hintBtn').disabled = true;
 
             const messageArea = document.getElementById('messageArea');
             messageArea.innerHTML = `
@@ -1240,6 +1334,7 @@
             document.getElementById('guessBtn').disabled = true;
             document.getElementById('giveUpBtn').disabled = true;
             document.getElementById('retryBtn').disabled = true;
+            document.getElementById('hintBtn').disabled = true;
 
             const messageArea = document.getElementById('messageArea');
             messageArea.innerHTML = `
@@ -1266,6 +1361,7 @@
             document.getElementById('guessBtn').disabled = true;
             document.getElementById('giveUpBtn').disabled = true;
             document.getElementById('retryBtn').disabled = true;
+            document.getElementById('hintBtn').disabled = true;
 
             // Reveal the target in the tree by setting deepest level to 6
             deepestLevel = 6;
