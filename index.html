@@ -207,66 +207,52 @@
             overflow-x: auto;
             overflow-y: visible;
             min-height: 600px;
+            position: relative;
+        }
+
+        .tree-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .tree-content {
+            position: relative;
+            z-index: 2;
         }
 
         .tree-root {
-            display: flex;
+            display: inline-flex;
             justify-content: center;
-            margin-bottom: 40px;
-        }
-
-        .tree-level-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 60px;
-            margin: 40px 0;
-            position: relative;
+            width: 100%;
         }
 
         .tree-branch-group {
-            display: flex;
+            display: inline-flex;
             flex-direction: column;
             align-items: center;
             position: relative;
+            margin: 0 20px;
         }
 
         .tree-children {
             display: flex;
             justify-content: center;
-            gap: 40px;
-            margin-top: 40px;
-            flex-wrap: wrap;
-        }
-
-        .tree-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
+            align-items: flex-start;
+            gap: 15px;
+            margin-top: 50px;
+            flex-wrap: nowrap;
         }
 
         .tree-node-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 10px;
             position: relative;
-        }
-
-        .tree-connector-line {
-            position: absolute;
-            top: -30px;
-            width: 2px;
-            height: 30px;
-            background: linear-gradient(to bottom, #52c234, #a8d530);
-        }
-
-        .tree-horizontal-line {
-            position: absolute;
-            top: -30px;
-            height: 2px;
-            background: linear-gradient(to right, #52c234, #a8d530);
         }
 
         .tree-node {
@@ -875,23 +861,26 @@
             return tree;
         }
 
+        // Generate unique ID for each node
+        let nodeIdCounter = 0;
+        function generateNodeId() {
+            return `node-${nodeIdCounter++}`;
+        }
+
         // Render tree recursively with top-down branching
-        function renderTreeNode(node, levelIdx, isFirstChild = false) {
+        function renderTreeNode(node, levelIdx) {
             const levelClasses = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
             const levelLabels = ['Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species'];
 
             const cssClass = levelClasses[levelIdx];
             const label = levelLabels[levelIdx];
+            const nodeId = generateNodeId();
+            node.id = nodeId;
 
             let html = '<div class="tree-branch-group">';
 
             // Node itself
-            html += '<div class="tree-node-wrapper">';
-
-            // Connector line (except for root)
-            if (levelIdx > 0) {
-                html += '<div class="tree-connector-line"></div>';
-            }
+            html += `<div class="tree-node-wrapper" id="${nodeId}">`;
 
             html += '<div class="level-label">' + label + '</div>';
 
@@ -913,8 +902,8 @@
             const children = Object.values(node.children);
             if (children.length > 0) {
                 html += '<div class="tree-children">';
-                children.forEach((child, index) => {
-                    html += renderTreeNode(child, child.levelIndex, index === 0);
+                children.forEach((child) => {
+                    html += renderTreeNode(child, child.levelIndex);
                 });
                 html += '</div>';
             }
@@ -923,9 +912,74 @@
             return html;
         }
 
+        // Draw smooth SVG connections between nodes
+        function drawConnections() {
+            const container = document.getElementById('treeDisplay');
+            const existingSvg = container.querySelector('.tree-svg');
+            if (existingSvg) {
+                existingSvg.remove();
+            }
+
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('class', 'tree-svg');
+            svg.style.position = 'absolute';
+            svg.style.top = '0';
+            svg.style.left = '0';
+            svg.style.width = '100%';
+            svg.style.height = '100%';
+            svg.style.pointerEvents = 'none';
+            svg.style.zIndex = '1';
+
+            const containerRect = container.getBoundingClientRect();
+
+            // Find all nodes and draw connections to their children
+            const allNodes = container.querySelectorAll('.tree-node-wrapper');
+            allNodes.forEach(parentNode => {
+                const parentRect = parentNode.getBoundingClientRect();
+                const parentX = parentRect.left + parentRect.width / 2 - containerRect.left;
+                const parentY = parentRect.bottom - containerRect.top;
+
+                // Find children
+                const parentGroup = parentNode.closest('.tree-branch-group');
+                const childrenContainer = parentGroup.querySelector(':scope > .tree-children');
+
+                if (childrenContainer) {
+                    const childWrappers = childrenContainer.querySelectorAll(':scope > .tree-branch-group > .tree-node-wrapper');
+
+                    childWrappers.forEach(childNode => {
+                        const childRect = childNode.getBoundingClientRect();
+                        const childX = childRect.left + childRect.width / 2 - containerRect.left;
+                        const childY = childRect.top - containerRect.top;
+
+                        // Create smooth curved path
+                        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+                        // Calculate control points for smooth curve
+                        const midY = parentY + (childY - parentY) * 0.6;
+
+                        const pathData = `M ${parentX} ${parentY}
+                                        C ${parentX} ${midY},
+                                          ${childX} ${midY},
+                                          ${childX} ${childY}`;
+
+                        path.setAttribute('d', pathData);
+                        path.setAttribute('stroke', '#52c234');
+                        path.setAttribute('stroke-width', '2');
+                        path.setAttribute('fill', 'none');
+                        path.setAttribute('opacity', '0.6');
+
+                        svg.appendChild(path);
+                    });
+                }
+            });
+
+            container.insertBefore(svg, container.firstChild);
+        }
+
         // Render the tree
         function renderTree() {
             const treeDisplay = document.getElementById('treeDisplay');
+            nodeIdCounter = 0;
 
             if (guesses.length === 0) {
                 treeDisplay.innerHTML = `
@@ -938,15 +992,20 @@
             }
 
             const tree = buildTreeStructure();
-            let html = '<div class="tree-root">';
+            let html = '<div class="tree-content"><div class="tree-root">';
 
             // Render from root (should only be Animalia)
             Object.values(tree).forEach(rootNode => {
                 html += renderTreeNode(rootNode, rootNode.levelIndex);
             });
 
-            html += '</div>';
+            html += '</div></div>';
             treeDisplay.innerHTML = html;
+
+            // Draw connections after DOM is updated
+            setTimeout(() => {
+                drawConnections();
+            }, 50);
         }
 
         // Add to guess history
@@ -1052,6 +1111,17 @@
                 </div>
             `;
         }
+
+        // Redraw connections on window resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (guesses.length > 0) {
+                    drawConnections();
+                }
+            }, 100);
+        });
 
         // Initialize
         loadAnimals();
