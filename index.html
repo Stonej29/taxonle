@@ -214,10 +214,9 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
             pointer-events: none;
             z-index: 1;
+            overflow: visible;
         }
 
         .tree-content {
@@ -920,20 +919,36 @@
                 existingSvg.remove();
             }
 
+            // Get the actual scrollable content area
+            const treeContent = container.querySelector('.tree-content');
+            if (!treeContent) return;
+
+            const containerRect = container.getBoundingClientRect();
+            const contentRect = treeContent.getBoundingClientRect();
+
+            // Create SVG with proper dimensions
             const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
             svg.setAttribute('class', 'tree-svg');
+
+            // Calculate proper SVG dimensions
+            const svgWidth = Math.max(contentRect.width, containerRect.width);
+            const svgHeight = Math.max(contentRect.height, containerRect.height);
+
+            svg.setAttribute('width', svgWidth);
+            svg.setAttribute('height', svgHeight);
+            svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
             svg.style.position = 'absolute';
             svg.style.top = '0';
             svg.style.left = '0';
-            svg.style.width = '100%';
-            svg.style.height = '100%';
             svg.style.pointerEvents = 'none';
             svg.style.zIndex = '1';
-
-            const containerRect = container.getBoundingClientRect();
+            svg.style.overflow = 'visible';
 
             // Find all nodes and draw connections to their children
             const allNodes = container.querySelectorAll('.tree-node-wrapper');
+
+            console.log('Drawing connections for', allNodes.length, 'nodes');
+
             allNodes.forEach(parentNode => {
                 const parentRect = parentNode.getBoundingClientRect();
                 const parentX = parentRect.left + parentRect.width / 2 - containerRect.left;
@@ -955,20 +970,20 @@
                         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
                         // Calculate control points for smooth curve
-                        const midY = parentY + (childY - parentY) * 0.6;
+                        const midY = parentY + (childY - parentY) * 0.5;
 
-                        const pathData = `M ${parentX} ${parentY}
-                                        C ${parentX} ${midY},
-                                          ${childX} ${midY},
-                                          ${childX} ${childY}`;
+                        const pathData = `M ${parentX} ${parentY} C ${parentX} ${midY}, ${childX} ${midY}, ${childX} ${childY}`;
 
                         path.setAttribute('d', pathData);
                         path.setAttribute('stroke', '#52c234');
-                        path.setAttribute('stroke-width', '2');
+                        path.setAttribute('stroke-width', '3');
                         path.setAttribute('fill', 'none');
-                        path.setAttribute('opacity', '0.6');
+                        path.setAttribute('opacity', '0.7');
+                        path.setAttribute('stroke-linecap', 'round');
 
                         svg.appendChild(path);
+
+                        console.log('Drew path from', parentX, parentY, 'to', childX, childY);
                     });
                 }
             });
@@ -1003,9 +1018,11 @@
             treeDisplay.innerHTML = html;
 
             // Draw connections after DOM is updated
-            setTimeout(() => {
-                drawConnections();
-            }, 50);
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    drawConnections();
+                }, 100);
+            });
         }
 
         // Add to guess history
