@@ -208,6 +208,8 @@
             overflow-y: visible;
             min-height: 600px;
             position: relative;
+            display: flex;
+            justify-content: center;
         }
 
         .tree-svg {
@@ -222,12 +224,14 @@
         .tree-content {
             position: relative;
             z-index: 2;
+            display: inline-block;
+            min-width: min-content;
         }
 
         .tree-root {
-            display: inline-flex;
+            display: flex;
             justify-content: center;
-            width: 100%;
+            align-items: flex-start;
         }
 
         .tree-branch-group {
@@ -692,16 +696,10 @@
 
             <div id="hintsArea" style="margin-top: 20px;"></div>
 
-            <div class="instructions">
-                <h4>How to Play</h4>
-                <p>• A mystery animal has been selected</p>
-                <p>• Guess animals to reveal shared taxonomy</p>
-                <p>• The tree shows what you have in common</p>
-                <p>• Closer guesses reveal deeper paths</p>
-                <p>• Find the target animal!</p>
+            <div class="button-group" style="margin-top: 20px;">
+                <button class="settings-btn" onclick="openHelp()" style="background: #17a2b8;">❓ Help</button>
+                <button class="settings-btn" onclick="openSettings()">⚙️ Settings</button>
             </div>
-
-            <button class="settings-btn" onclick="openSettings()">⚙️ Settings</button>
         </div>
 
         <div class="tree-panel">
@@ -732,6 +730,43 @@
                 <button class="cancel-btn" onclick="closeSettings()">Cancel</button>
                 <button class="apply-btn" onclick="applyFilterSettings()">Apply & Start New Game</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal-overlay" onclick="closeHelpIfOutside(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>❓ How to Play</h2>
+                <button class="close-btn" onclick="closeHelp()">&times;</button>
+            </div>
+            <div class="settings-description">
+                <h4 style="color: #2d7a1f; margin-bottom: 10px;">Objective</h4>
+                <p style="margin-bottom: 15px;">A mystery animal has been selected. Your goal is to discover what it is by guessing other animals and observing their taxonomic relationships.</p>
+
+                <h4 style="color: #2d7a1f; margin-bottom: 10px;">How It Works</h4>
+                <p>• Each guess reveals how much taxonomy you share with the mystery animal</p>
+                <p>• The tree shows the shared taxonomic path</p>
+                <p>• Closer guesses reveal deeper levels (Kingdom → Phylum → Class → Order → Family → Genus → Species)</p>
+                <p>• Animals appear at their divergence point on the tree</p>
+                <p>• The ??? marker shows where the mystery animal branches off</p>
+
+                <h4 style="color: #2d7a1f; margin-bottom: 10px; margin-top: 15px;">Hints</h4>
+                <p>• Hint 1 unlocks at 5 guesses (Conservation Status)</p>
+                <p>• Hint 2 unlocks at 10 guesses (Geographic Distribution)</p>
+
+                <h4 style="color: #2d7a1f; margin-bottom: 10px; margin-top: 15px;">Tips</h4>
+                <p>• Start with broad guesses to narrow down the phylum/class</p>
+                <p>• Use the autocomplete to find animals quickly</p>
+                <p>• Watch the tree structure to guide your next guess</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="modal-overlay">
+        <div class="modal-content" onclick="event.stopPropagation()" style="text-align: center;">
+            <div id="gameOverContent"></div>
         </div>
     </div>
 
@@ -1070,7 +1105,9 @@
                 }
             }
 
-            // Place each guessed animal at its correct divergence point
+            // Collect animals by their divergence level
+            const animalsByLevel = {};
+
             guesses.forEach(animal => {
                 // Find how deep this animal matches with target
                 let animalDepth = 0;
@@ -1097,31 +1134,58 @@
                     }
                 }
 
-                // Place animal at its divergence point
-                const divergenceLevel = animalDepth + 1;
-                if (divergenceLevel <= 6 && pathNodes[animalDepth]) {
-                    const animalKey = `animal_${animal.commonName}`;
-                    pathNodes[animalDepth][animalKey] = {
-                        name: animal.commonName,
-                        scientificName: animal.scientificName,
-                        level: 'animal',
-                        levelIndex: divergenceLevel,
-                        children: {},
-                        animal: animal
-                    };
+                if (!animalsByLevel[animalDepth]) {
+                    animalsByLevel[animalDepth] = [];
                 }
+                animalsByLevel[animalDepth].push(animal);
             });
 
-            // Add mystery placeholder at the deepest revealed level
-            if (!gameOver && deepestLevel < 6 && pathNodes[deepestLevel]) {
-                pathNodes[deepestLevel]['mystery'] = {
-                    name: '???',
-                    level: 'animal',
-                    levelIndex: deepestLevel + 1,
-                    children: {},
-                    mystery: true
-                };
-            }
+            // Place animals at their divergence points with mystery in the middle at deepest level
+            Object.keys(animalsByLevel).forEach(depthStr => {
+                const depth = parseInt(depthStr);
+                const animalsAtDepth = animalsByLevel[depth];
+
+                if (depth === deepestLevel && !gameOver && deepestLevel < 6) {
+                    // Insert mystery in the middle for the deepest level
+                    const midPoint = Math.floor(animalsAtDepth.length / 2);
+
+                    animalsAtDepth.forEach((animal, idx) => {
+                        if (idx === midPoint) {
+                            // Add mystery first
+                            pathNodes[depth]['mystery'] = {
+                                name: '???',
+                                level: 'animal',
+                                levelIndex: depth + 1,
+                                children: {},
+                                mystery: true
+                            };
+                        }
+
+                        const animalKey = `animal_${animal.commonName}_${idx}`;
+                        pathNodes[depth][animalKey] = {
+                            name: animal.commonName,
+                            scientificName: animal.scientificName,
+                            level: 'animal',
+                            levelIndex: depth + 1,
+                            children: {},
+                            animal: animal
+                        };
+                    });
+                } else {
+                    // Normal placement for other levels
+                    animalsAtDepth.forEach((animal, idx) => {
+                        const animalKey = `animal_${animal.commonName}_${idx}`;
+                        pathNodes[depth][animalKey] = {
+                            name: animal.commonName,
+                            scientificName: animal.scientificName,
+                            level: 'animal',
+                            levelIndex: depth + 1,
+                            children: {},
+                            animal: animal
+                        };
+                    });
+                }
+            });
 
             return tree;
         }
@@ -1315,16 +1379,17 @@
             document.getElementById('retryBtn').disabled = true;
             document.getElementById('hintBtn').disabled = true;
 
-            const messageArea = document.getElementById('messageArea');
-            messageArea.innerHTML = `
+            const gameOverContent = document.getElementById('gameOverContent');
+            gameOverContent.innerHTML = `
                 <div class="game-over">
                     <h3>🎉 You Found It!</h3>
                     <p><strong>${targetAnimal.commonName}</strong></p>
                     <p><em>${targetAnimal.scientificName}</em></p>
                     <p>Guessed in ${guessCount} ${guessCount === 1 ? 'try' : 'tries'}!</p>
-                    <button class="new-game-btn" onclick="startNewGame()">Play Again</button>
+                    <button class="new-game-btn" onclick="closeGameOver(); startNewGame();">Play Again</button>
                 </div>
             `;
+            document.getElementById('gameOverModal').classList.add('active');
         }
 
         // Lose game
@@ -1336,16 +1401,17 @@
             document.getElementById('retryBtn').disabled = true;
             document.getElementById('hintBtn').disabled = true;
 
-            const messageArea = document.getElementById('messageArea');
-            messageArea.innerHTML = `
+            const gameOverContent = document.getElementById('gameOverContent');
+            gameOverContent.innerHTML = `
                 <div class="game-over">
                     <h3>Game Over!</h3>
                     <p>The answer was:</p>
                     <p><strong>${targetAnimal.commonName}</strong></p>
                     <p><em>${targetAnimal.scientificName}</em></p>
-                    <button class="new-game-btn" onclick="startNewGame()">Try Again</button>
+                    <button class="new-game-btn" onclick="closeGameOver(); startNewGame();">Try Again</button>
                 </div>
             `;
+            document.getElementById('gameOverModal').classList.add('active');
         }
 
         // Give up
@@ -1373,17 +1439,18 @@
 
             renderTree();
 
-            const messageArea = document.getElementById('messageArea');
-            messageArea.innerHTML = `
+            const gameOverContent = document.getElementById('gameOverContent');
+            gameOverContent.innerHTML = `
                 <div class="game-over">
                     <h3>You Gave Up!</h3>
                     <p>The answer was:</p>
                     <p><strong>${targetAnimal.commonName}</strong></p>
                     <p><em>${targetAnimal.scientificName}</em></p>
                     <p>Better luck next time!</p>
-                    <button class="new-game-btn" onclick="startNewGame()">Try Again</button>
+                    <button class="new-game-btn" onclick="closeGameOver(); startNewGame();">Try Again</button>
                 </div>
             `;
+            document.getElementById('gameOverModal').classList.add('active');
         }
 
         // Redraw connections on window resize
@@ -1421,6 +1488,26 @@
             if (event.target.id === 'settingsModal') {
                 closeSettings();
             }
+        }
+
+        // Help Modal Functions
+        function openHelp() {
+            document.getElementById('helpModal').classList.add('active');
+        }
+
+        function closeHelp() {
+            document.getElementById('helpModal').classList.remove('active');
+        }
+
+        function closeHelpIfOutside(event) {
+            if (event.target.id === 'helpModal') {
+                closeHelp();
+            }
+        }
+
+        // Game Over Modal Functions
+        function closeGameOver() {
+            document.getElementById('gameOverModal').classList.remove('active');
         }
 
         // Build taxonomy filter tree (top 3 levels: Kingdom, Phylum, Class)
