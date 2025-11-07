@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animal Taxonomy Wordle</title>
+    <title>Taxonle</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #52c234 0%, #a8d530 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -32,7 +32,7 @@
 
         h1 {
             text-align: center;
-            color: #667eea;
+            color: #2d7a1f;
             margin-bottom: 10px;
             font-size: 2.5em;
         }
@@ -66,7 +66,7 @@
         .info-value {
             font-size: 1.5em;
             font-weight: bold;
-            color: #667eea;
+            color: #2d7a1f;
         }
 
         .input-section {
@@ -89,7 +89,7 @@
 
         input[type="text"]:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #52c234;
         }
 
         .autocomplete-list {
@@ -98,7 +98,7 @@
             left: 0;
             right: 0;
             background: white;
-            border: 2px solid #667eea;
+            border: 2px solid #52c234;
             border-top: none;
             border-radius: 0 0 10px 10px;
             max-height: 200px;
@@ -132,7 +132,7 @@
             width: 100%;
             padding: 15px;
             font-size: 1.1em;
-            background: #667eea;
+            background: #52c234;
             color: white;
             border: none;
             border-radius: 10px;
@@ -142,7 +142,7 @@
         }
 
         button:hover {
-            background: #5568d3;
+            background: #3da328;
         }
 
         button:disabled {
@@ -292,11 +292,11 @@
             text-align: center;
             padding: 40px;
             font-size: 1.2em;
-            color: #667eea;
+            color: #2d7a1f;
         }
 
         h2 {
-            color: #667eea;
+            color: #2d7a1f;
             margin-bottom: 10px;
             font-size: 1.5em;
         }
@@ -304,7 +304,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🦁 Animal Taxonomy Wordle</h1>
+        <h1>🦁 Taxonle</h1>
         <p class="subtitle">Guess the animal by its taxonomy!</p>
 
         <div id="loading" class="loading">Loading animals...</div>
@@ -320,6 +320,8 @@
                     <div class="info-value" id="animalCount">0</div>
                 </div>
             </div>
+
+            <div id="gameMessage"></div>
 
             <div class="input-section">
                 <div class="search-wrapper">
@@ -338,8 +340,6 @@
                 <h2>Your Guesses</h2>
                 <div id="guessHistory" class="guess-history"></div>
             </div>
-
-            <div id="gameMessage"></div>
         </div>
     </div>
 
