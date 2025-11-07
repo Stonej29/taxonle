@@ -38,8 +38,8 @@
         .game-container {
             max-width: 1400px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: 350px 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 20px;
         }
 
@@ -48,9 +48,11 @@
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            height: fit-content;
-            position: sticky;
-            top: 20px;
+            order: 2;
+        }
+
+        .tree-panel {
+            order: 1;
         }
 
         .stats {
@@ -634,14 +636,62 @@
             line-height: 1.5;
         }
 
-        @media (max-width: 1024px) {
-            .game-container {
-                grid-template-columns: 1fr;
+        /* Mobile-first adjustments */
+        @media (max-width: 767px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .header .subtitle {
+                font-size: 1em;
             }
 
             .left-panel {
-                position: relative;
-                top: 0;
+                padding: 20px;
+            }
+
+            .tree-panel {
+                padding: 20px;
+            }
+
+            .tree-container {
+                padding: 20px 10px;
+                min-height: 400px;
+            }
+
+            button {
+                padding: 14px;
+                font-size: 1em;
+            }
+
+            .modal-content {
+                margin: 10px;
+                padding: 20px;
+                max-width: calc(100% - 20px);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .game-container {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+
+            .left-panel {
+                order: 1;
+                width: 350px;
+                flex-shrink: 0;
+                position: sticky;
+                top: 20px;
+            }
+
+            .tree-panel {
+                order: 2;
+                flex: 1;
             }
         }
     </style>
