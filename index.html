@@ -205,31 +205,39 @@
         .tree-container {
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             padding: 20px;
+            overflow-x: auto;
         }
 
-        .tree-level {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
+        .tree-branch {
+            margin-left: 40px;
+            border-left: 3px solid #e0e0e0;
+            padding-left: 20px;
             position: relative;
-            width: 100%;
         }
 
-        .tree-nodes {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
+        .tree-branch::before {
+            content: '';
+            position: absolute;
+            left: -3px;
+            top: 20px;
+            width: 20px;
+            height: 3px;
+            background: #e0e0e0;
+        }
+
+        .tree-item {
+            margin: 8px 0;
+            position: relative;
         }
 
         .tree-node {
-            padding: 12px 20px;
+            display: inline-block;
+            padding: 10px 16px;
             border-radius: 8px;
             font-weight: 500;
-            text-align: center;
-            min-width: 120px;
+            min-width: 100px;
             position: relative;
             animation: fadeIn 0.5s ease-out;
             cursor: pointer;
@@ -237,7 +245,7 @@
         }
 
         .tree-node:hover {
-            transform: translateY(-2px);
+            transform: scale(1.05);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
@@ -314,13 +322,6 @@
             font-size: 1.15em;
             box-shadow: 0 4px 12px rgba(73, 80, 87, 0.5);
             border: 3px dashed #212529;
-        }
-
-        .tree-connector {
-            width: 2px;
-            height: 30px;
-            background: linear-gradient(180deg, #52c234, #a8d530);
-            margin: 0 auto;
         }
 
         .empty-tree {
@@ -446,11 +447,15 @@
         }
 
         .level-label {
+            display: inline-block;
             font-size: 0.75em;
             text-transform: uppercase;
-            opacity: 0.8;
-            margin-bottom: 4px;
+            opacity: 0.7;
+            margin-right: 8px;
             letter-spacing: 0.5px;
+            color: #666;
+            font-weight: 600;
+            min-width: 60px;
         }
 
         @media (max-width: 1024px) {
@@ -759,6 +764,119 @@
             return levelName;
         }
 
+        // Build hierarchical tree structure
+        function buildTreeStructure() {
+            const tree = {};
+            const levels = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
+
+            // Build tree from guesses
+            guesses.forEach(animal => {
+                let currentNode = tree;
+
+                for (let i = 0; i < levels.length; i++) {
+                    const level = levels[i];
+                    let value;
+
+                    if (level === 'kingdom') {
+                        value = 'Animalia';
+                    } else if (level === 'species') {
+                        value = animal.scientificName;
+                    } else {
+                        value = animal[level] || 'Unknown';
+                    }
+
+                    if (!currentNode[value]) {
+                        currentNode[value] = {
+                            name: value,
+                            level: level,
+                            levelIndex: i,
+                            children: {},
+                            animal: level === 'species' ? animal : null
+                        };
+                    }
+
+                    currentNode = currentNode[value].children;
+                }
+            });
+
+            // Add mystery placeholder at the appropriate level
+            if (!gameOver && deepestLevel < 6) {
+                // Find where to place the mystery node based on target animal's taxonomy
+                let currentNode = tree;
+                const targetPath = [];
+
+                for (let i = 0; i <= deepestLevel; i++) {
+                    const level = levels[i];
+                    let value;
+
+                    if (level === 'kingdom') {
+                        value = 'Animalia';
+                    } else if (level === 'species') {
+                        value = targetAnimal.scientificName;
+                    } else {
+                        value = targetAnimal[level] || 'Unknown';
+                    }
+
+                    if (currentNode[value]) {
+                        currentNode = currentNode[value].children;
+                    } else {
+                        break;
+                    }
+                }
+
+                // Add mystery at next level
+                const mysteryLevel = levels[deepestLevel + 1];
+                currentNode['???'] = {
+                    name: '???',
+                    level: mysteryLevel,
+                    levelIndex: deepestLevel + 1,
+                    children: {},
+                    mystery: true
+                };
+            }
+
+            return tree;
+        }
+
+        // Render tree recursively
+        function renderTreeNode(node, levelIdx) {
+            const levelClasses = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
+            const levelLabels = ['Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species'];
+
+            const cssClass = levelClasses[levelIdx];
+            const label = levelLabels[levelIdx];
+
+            let html = '<div class="tree-item">';
+
+            if (node.mystery) {
+                html += `<span class="level-label">${label}:</span> `;
+                html += `<div class="tree-node mystery">???</div>`;
+            } else if (node.animal) {
+                // This is a species (leaf node)
+                const isTarget = node.animal.scientificName === targetAnimal.scientificName;
+                html += `<span class="level-label">${label}:</span> `;
+                html += `<div class="tree-node ${isTarget ? 'target' : cssClass}" title="${node.animal.scientificName}">
+                    ${node.animal.commonName}
+                </div>`;
+            } else {
+                html += `<span class="level-label">${label}:</span> `;
+                html += `<div class="tree-node ${cssClass}">${node.name}</div>`;
+            }
+
+            // Render children
+            const children = Object.values(node.children);
+            if (children.length > 0) {
+                html += '<div class="tree-branch">';
+                children.forEach(child => {
+                    html += renderTreeNode(child, child.levelIndex);
+                });
+                html += '</div>';
+            }
+
+            html += '</div>';
+            return html;
+        }
+
         // Render the tree
         function renderTree() {
             const treeDisplay = document.getElementById('treeDisplay');
@@ -773,80 +891,13 @@
                 return;
             }
 
-            const levels = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
-            const levelLabels = ['Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species'];
-            const levelClasses = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
-
+            const tree = buildTreeStructure();
             let html = '';
 
-            // Build tree level by level
-            for (let levelIdx = 0; levelIdx <= Math.min(deepestLevel + 1, 6); levelIdx++) {
-                const level = levels[levelIdx];
-                const label = levelLabels[levelIdx];
-                const cssClass = levelClasses[levelIdx];
-
-                const nodesAtLevel = new Set();
-
-                // Add all guessed animals at this level
-                guesses.forEach(animal => {
-                    let value;
-                    if (level === 'kingdom') {
-                        value = 'Animalia';
-                    } else if (level === 'species') {
-                        value = animal.scientificName;
-                    } else {
-                        value = animal[level];
-                    }
-                    if (value) {
-                        nodesAtLevel.add(JSON.stringify({ value, commonName: animal.commonName, scientific: animal.scientificName }));
-                    }
-                });
-
-                // Add mystery placeholder at the next unrevealed level
-                if (levelIdx === deepestLevel + 1 && levelIdx <= 6 && !gameOver) {
-                    nodesAtLevel.add(JSON.stringify({ value: '???', mystery: true }));
-                }
-
-                if (nodesAtLevel.size > 0) {
-                    if (levelIdx > 0) {
-                        html += `<div class="tree-connector"></div>`;
-                    }
-
-                    html += `<div class="tree-level"><div class="tree-nodes">`;
-
-                    nodesAtLevel.forEach(nodeStr => {
-                        const node = JSON.parse(nodeStr);
-
-                        if (node.mystery) {
-                            html += `
-                                <div>
-                                    <div class="level-label">${label}</div>
-                                    <div class="tree-node mystery">???</div>
-                                </div>
-                            `;
-                        } else if (level === 'species') {
-                            const isTarget = node.scientific === targetAnimal.scientificName;
-                            html += `
-                                <div>
-                                    <div class="level-label">${label}</div>
-                                    <div class="tree-node ${isTarget ? 'target' : cssClass}" title="${node.scientific}">
-                                        ${node.commonName}
-                                    </div>
-                                </div>
-                            `;
-                        } else {
-                            html += `
-                                <div>
-                                    <div class="level-label">${label}</div>
-                                    <div class="tree-node ${cssClass}">${node.value}</div>
-                                </div>
-                            `;
-                        }
-                    });
-
-                    html += `</div></div>`;
-                }
-            }
+            // Render from root
+            Object.values(tree).forEach(rootNode => {
+                html += renderTreeNode(rootNode, rootNode.levelIndex);
+            });
 
             treeDisplay.innerHTML = html;
         }
