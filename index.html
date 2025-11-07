@@ -307,6 +307,15 @@
             border: 3px solid #f59f00;
         }
 
+        .tree-node.mystery {
+            background: linear-gradient(135deg, #868e96, #495057);
+            color: white;
+            font-weight: bold;
+            font-size: 1.15em;
+            box-shadow: 0 4px 12px rgba(73, 80, 87, 0.5);
+            border: 3px dashed #212529;
+        }
+
         .tree-connector {
             width: 2px;
             height: 30px;
@@ -495,6 +504,7 @@
                     <div id="autocompleteList" class="autocomplete-list"></div>
                 </div>
                 <button id="guessBtn" onclick="makeGuess()">Submit Guess</button>
+                <button id="giveUpBtn" onclick="giveUp()" style="background: #dc3545; margin-top: 10px;">Give Up</button>
             </div>
 
             <div class="instructions">
@@ -581,6 +591,7 @@
             document.getElementById('guessInput').value = '';
             document.getElementById('guessInput').disabled = false;
             document.getElementById('guessBtn').disabled = false;
+            document.getElementById('giveUpBtn').disabled = false;
 
             console.log('Target:', targetAnimal);
         }
@@ -752,7 +763,7 @@
         function renderTree() {
             const treeDisplay = document.getElementById('treeDisplay');
 
-            if (!revealedTree.kingdom) {
+            if (guesses.length === 0) {
                 treeDisplay.innerHTML = `
                     <div class="empty-tree">
                         <div class="empty-tree-icon">🌱</div>
@@ -762,103 +773,79 @@
                 return;
             }
 
+            const levels = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
+            const levelLabels = ['Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species'];
+            const levelClasses = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
+
             let html = '';
 
-            // Kingdom (always Animalia)
-            html += `
-                <div class="tree-level">
-                    <div class="tree-nodes">
-                        <div>
-                            <div class="level-label">Kingdom</div>
-                            <div class="tree-node kingdom">Animalia</div>
-                        </div>
-                    </div>
-                </div>
-            `;
+            // Build tree level by level
+            for (let levelIdx = 0; levelIdx <= Math.min(deepestLevel + 1, 6); levelIdx++) {
+                const level = levels[levelIdx];
+                const label = levelLabels[levelIdx];
+                const cssClass = levelClasses[levelIdx];
 
-            if (deepestLevel >= 1 && revealedTree.phylum.size > 0) {
-                html += `<div class="tree-connector"></div>`;
-                html += `<div class="tree-level"><div class="tree-nodes">`;
-                revealedTree.phylum.forEach(phylum => {
-                    html += `
-                        <div>
-                            <div class="level-label">Phylum</div>
-                            <div class="tree-node phylum">${phylum}</div>
-                        </div>
-                    `;
-                });
-                html += `</div></div>`;
-            }
+                const nodesAtLevel = new Set();
 
-            if (deepestLevel >= 2 && revealedTree.class.size > 0) {
-                html += `<div class="tree-connector"></div>`;
-                html += `<div class="tree-level"><div class="tree-nodes">`;
-                revealedTree.class.forEach(cls => {
-                    html += `
-                        <div>
-                            <div class="level-label">Class</div>
-                            <div class="tree-node class">${cls}</div>
-                        </div>
-                    `;
+                // Add all guessed animals at this level
+                guesses.forEach(animal => {
+                    let value;
+                    if (level === 'kingdom') {
+                        value = 'Animalia';
+                    } else if (level === 'species') {
+                        value = animal.scientificName;
+                    } else {
+                        value = animal[level];
+                    }
+                    if (value) {
+                        nodesAtLevel.add(JSON.stringify({ value, commonName: animal.commonName, scientific: animal.scientificName }));
+                    }
                 });
-                html += `</div></div>`;
-            }
 
-            if (deepestLevel >= 3 && revealedTree.order.size > 0) {
-                html += `<div class="tree-connector"></div>`;
-                html += `<div class="tree-level"><div class="tree-nodes">`;
-                revealedTree.order.forEach(order => {
-                    html += `
-                        <div>
-                            <div class="level-label">Order</div>
-                            <div class="tree-node order">${order}</div>
-                        </div>
-                    `;
-                });
-                html += `</div></div>`;
-            }
+                // Add mystery placeholder at the next unrevealed level
+                if (levelIdx === deepestLevel + 1 && levelIdx <= 6 && !gameOver) {
+                    nodesAtLevel.add(JSON.stringify({ value: '???', mystery: true }));
+                }
 
-            if (deepestLevel >= 4 && revealedTree.family.size > 0) {
-                html += `<div class="tree-connector"></div>`;
-                html += `<div class="tree-level"><div class="tree-nodes">`;
-                revealedTree.family.forEach(family => {
-                    html += `
-                        <div>
-                            <div class="level-label">Family</div>
-                            <div class="tree-node family">${family}</div>
-                        </div>
-                    `;
-                });
-                html += `</div></div>`;
-            }
+                if (nodesAtLevel.size > 0) {
+                    if (levelIdx > 0) {
+                        html += `<div class="tree-connector"></div>`;
+                    }
 
-            if (deepestLevel >= 5 && revealedTree.genus.size > 0) {
-                html += `<div class="tree-connector"></div>`;
-                html += `<div class="tree-level"><div class="tree-nodes">`;
-                revealedTree.genus.forEach(genus => {
-                    html += `
-                        <div>
-                            <div class="level-label">Genus</div>
-                            <div class="tree-node genus">${genus}</div>
-                        </div>
-                    `;
-                });
-                html += `</div></div>`;
-            }
+                    html += `<div class="tree-level"><div class="tree-nodes">`;
 
-            if (deepestLevel >= 6 && revealedTree.species.size > 0) {
-                html += `<div class="tree-connector"></div>`;
-                html += `<div class="tree-level"><div class="tree-nodes">`;
-                revealedTree.species.forEach(species => {
-                    const isTarget = species === targetAnimal.scientificName;
-                    html += `
-                        <div>
-                            <div class="level-label">Species</div>
-                            <div class="tree-node ${isTarget ? 'target' : 'species'}">${species}</div>
-                        </div>
-                    `;
-                });
-                html += `</div></div>`;
+                    nodesAtLevel.forEach(nodeStr => {
+                        const node = JSON.parse(nodeStr);
+
+                        if (node.mystery) {
+                            html += `
+                                <div>
+                                    <div class="level-label">${label}</div>
+                                    <div class="tree-node mystery">???</div>
+                                </div>
+                            `;
+                        } else if (level === 'species') {
+                            const isTarget = node.scientific === targetAnimal.scientificName;
+                            html += `
+                                <div>
+                                    <div class="level-label">${label}</div>
+                                    <div class="tree-node ${isTarget ? 'target' : cssClass}" title="${node.scientific}">
+                                        ${node.commonName}
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            html += `
+                                <div>
+                                    <div class="level-label">${label}</div>
+                                    <div class="tree-node ${cssClass}">${node.value}</div>
+                                </div>
+                            `;
+                        }
+                    });
+
+                    html += `</div></div>`;
+                }
             }
 
             treeDisplay.innerHTML = html;
@@ -899,6 +886,7 @@
             gameOver = true;
             guessInput.disabled = true;
             document.getElementById('guessBtn').disabled = true;
+            document.getElementById('giveUpBtn').disabled = true;
 
             const messageArea = document.getElementById('messageArea');
             messageArea.innerHTML = `
@@ -917,6 +905,7 @@
             gameOver = true;
             guessInput.disabled = true;
             document.getElementById('guessBtn').disabled = true;
+            document.getElementById('giveUpBtn').disabled = true;
 
             const messageArea = document.getElementById('messageArea');
             messageArea.innerHTML = `
@@ -925,6 +914,42 @@
                     <p>The answer was:</p>
                     <p><strong>${targetAnimal.commonName}</strong></p>
                     <p><em>${targetAnimal.scientificName}</em></p>
+                    <button class="new-game-btn" onclick="startNewGame()">Try Again</button>
+                </div>
+            `;
+        }
+
+        // Give up
+        function giveUp() {
+            if (gameOver) return;
+
+            if (!confirm('Are you sure you want to give up and see the answer?')) {
+                return;
+            }
+
+            gameOver = true;
+            guessInput.disabled = true;
+            document.getElementById('guessBtn').disabled = true;
+            document.getElementById('giveUpBtn').disabled = true;
+
+            // Reveal the target in the tree by setting deepest level to 6
+            deepestLevel = 6;
+
+            // Add target to guesses to show it in the tree
+            if (!guesses.some(g => g.scientificName === targetAnimal.scientificName)) {
+                guesses.push(targetAnimal);
+            }
+
+            renderTree();
+
+            const messageArea = document.getElementById('messageArea');
+            messageArea.innerHTML = `
+                <div class="game-over">
+                    <h3>You Gave Up!</h3>
+                    <p>The answer was:</p>
+                    <p><strong>${targetAnimal.commonName}</strong></p>
+                    <p><em>${targetAnimal.scientificName}</em></p>
+                    <p>Better luck next time!</p>
                     <button class="new-game-btn" onclick="startNewGame()">Try Again</button>
                 </div>
             `;
