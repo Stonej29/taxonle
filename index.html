@@ -790,8 +790,10 @@
         function buildTreeStructure() {
             const levels = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
 
-            // Build only the shared path up to deepestLevel
+            // Build the shared path up to deepestLevel
             const tree = {};
+            const pathNodes = []; // Track nodes at each level for placing animals
+
             let currentNode = tree;
 
             // Build the common path
@@ -801,8 +803,10 @@
 
                 if (level === 'kingdom') {
                     value = 'Animalia';
-                } else if (i <= deepestLevel) {
-                    value = targetAnimal[level] || 'Unknown';
+                } else if (level === 'species') {
+                    value = targetAnimal.scientificName;
+                } else {
+                    value = targetAnimal[level];
                 }
 
                 if (value) {
@@ -813,50 +817,62 @@
                         children: {},
                         isSharedPath: true
                     };
+                    pathNodes[i] = currentNode[value].children;
                     currentNode = currentNode[value].children;
                 }
             }
 
-            // At the end of the shared path, add all guessed animals and mystery
-            const divergenceLevel = deepestLevel + 1;
+            // Place each guessed animal at its correct divergence point
+            guesses.forEach(animal => {
+                // Find how deep this animal matches with target
+                let animalDepth = 0;
+                for (let i = 0; i < levels.length; i++) {
+                    const level = levels[i];
+                    let guessValue, targetValue;
 
-            if (divergenceLevel <= 6) {
-                // Add all guessed animals at divergence point
-                guesses.forEach(animal => {
+                    if (level === 'kingdom') {
+                        guessValue = 'Animalia';
+                        targetValue = 'Animalia';
+                    } else if (level === 'species') {
+                        guessValue = animal.scientificName;
+                        targetValue = targetAnimal.scientificName;
+                    } else {
+                        guessValue = animal[level];
+                        targetValue = targetAnimal[level];
+                    }
+
+                    if (guessValue && targetValue &&
+                        guessValue.toLowerCase() === targetValue.toLowerCase()) {
+                        animalDepth = i;
+                    } else {
+                        break;
+                    }
+                }
+
+                // Place animal at its divergence point
+                const divergenceLevel = animalDepth + 1;
+                if (divergenceLevel <= 6 && pathNodes[animalDepth]) {
                     const animalKey = `animal_${animal.commonName}`;
-                    currentNode[animalKey] = {
+                    pathNodes[animalDepth][animalKey] = {
                         name: animal.commonName,
                         scientificName: animal.scientificName,
                         level: 'animal',
                         levelIndex: divergenceLevel,
                         children: {},
                         animal: animal
-                    };
-                });
-
-                // Add mystery placeholder
-                if (!gameOver) {
-                    currentNode['mystery'] = {
-                        name: '???',
-                        level: 'animal',
-                        levelIndex: divergenceLevel,
-                        children: {},
-                        mystery: true
                     };
                 }
-            } else {
-                // If we've reached species level, just show the animals
-                guesses.forEach(animal => {
-                    const animalKey = `animal_${animal.commonName}`;
-                    currentNode[animalKey] = {
-                        name: animal.commonName,
-                        scientificName: animal.scientificName,
-                        level: 'animal',
-                        levelIndex: 6,
-                        children: {},
-                        animal: animal
-                    };
-                });
+            });
+
+            // Add mystery placeholder at the deepest revealed level
+            if (!gameOver && deepestLevel < 6 && pathNodes[deepestLevel]) {
+                pathNodes[deepestLevel]['mystery'] = {
+                    name: '???',
+                    level: 'animal',
+                    levelIndex: deepestLevel + 1,
+                    children: {},
+                    mystery: true
+                };
             }
 
             return tree;
