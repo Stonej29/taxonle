@@ -4,6 +4,31 @@
 
 This repository contains a comprehensive taxonomic dataset of animal species with detailed information about their taxonomy, distribution, conservation status, and characteristics.
 
+## 🎮 Animal Taxonomy Wordle Game
+
+An interactive browser-based game where you guess animals based on their taxonomic classification!
+
+**Play the game:** Open `index.html` in your browser
+
+### How to Play
+
+1. The game randomly selects a target animal from the dataset
+2. Enter your guess using either the common name or scientific name
+3. After each guess, see how your animal's taxonomy compares to the target:
+   - 🟢 **Green** = Taxonomy level matches
+   - 🔴 **Red** = Taxonomy level doesn't match
+4. You have 6 attempts to guess the correct animal
+5. Use the autocomplete feature to help find animals in the database
+
+### Features
+
+- **760 animals** from the dataset
+- **Autocomplete search** for easy animal selection
+- **Visual feedback** with color-coded taxonomy comparison
+- **Responsive design** works on desktop and mobile
+- **Guess history** shows all your previous attempts
+- **Fully client-side** - no server required!
+
 ## Dataset File
 
 **File:** `animals_complete.tsv`
