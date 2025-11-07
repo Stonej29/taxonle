@@ -207,66 +207,51 @@
             overflow-x: auto;
             overflow-y: visible;
             min-height: 600px;
+            position: relative;
+        }
+
+        .tree-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: visible;
+        }
+
+        .tree-content {
+            position: relative;
+            z-index: 2;
         }
 
         .tree-root {
-            display: flex;
+            display: inline-flex;
             justify-content: center;
-            margin-bottom: 40px;
-        }
-
-        .tree-level-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 60px;
-            margin: 40px 0;
-            position: relative;
+            width: 100%;
         }
 
         .tree-branch-group {
-            display: flex;
+            display: inline-flex;
             flex-direction: column;
             align-items: center;
             position: relative;
+            margin: 0 20px;
         }
 
         .tree-children {
             display: flex;
             justify-content: center;
-            gap: 40px;
-            margin-top: 40px;
-            flex-wrap: wrap;
-        }
-
-        .tree-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
+            align-items: flex-start;
+            gap: 15px;
+            margin-top: 50px;
+            flex-wrap: nowrap;
         }
 
         .tree-node-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 10px;
             position: relative;
-        }
-
-        .tree-connector-line {
-            position: absolute;
-            top: -30px;
-            width: 2px;
-            height: 30px;
-            background: linear-gradient(to bottom, #52c234, #a8d530);
-        }
-
-        .tree-horizontal-line {
-            position: absolute;
-            top: -30px;
-            height: 2px;
-            background: linear-gradient(to right, #52c234, #a8d530);
         }
 
         .tree-node {
@@ -801,110 +786,118 @@
             return levelName;
         }
 
-        // Build hierarchical tree structure
+        // Build simplified tree showing only shared path and divergence points
         function buildTreeStructure() {
-            const tree = {};
             const levels = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
 
-            // Build tree from guesses
-            guesses.forEach(animal => {
-                let currentNode = tree;
+            // Build only the shared path up to deepestLevel
+            const tree = {};
+            let currentNode = tree;
 
-                for (let i = 0; i < levels.length; i++) {
-                    const level = levels[i];
-                    let value;
+            // Build the common path
+            for (let i = 0; i <= deepestLevel; i++) {
+                const level = levels[i];
+                let value;
 
-                    if (level === 'kingdom') {
-                        value = 'Animalia';
-                    } else if (level === 'species') {
-                        value = animal.scientificName;
-                    } else {
-                        value = animal[level] || 'Unknown';
-                    }
+                if (level === 'kingdom') {
+                    value = 'Animalia';
+                } else if (i <= deepestLevel) {
+                    value = targetAnimal[level] || 'Unknown';
+                }
 
-                    if (!currentNode[value]) {
-                        currentNode[value] = {
-                            name: value,
-                            level: level,
-                            levelIndex: i,
-                            children: {},
-                            animal: level === 'species' ? animal : null
-                        };
-                    }
-
+                if (value) {
+                    currentNode[value] = {
+                        name: value,
+                        level: level,
+                        levelIndex: i,
+                        children: {},
+                        isSharedPath: true
+                    };
                     currentNode = currentNode[value].children;
                 }
-            });
+            }
 
-            // Add mystery placeholder at the appropriate level
-            if (!gameOver && deepestLevel < 6) {
-                // Find where to place the mystery node based on target animal's taxonomy
-                let currentNode = tree;
-                const targetPath = [];
+            // At the end of the shared path, add all guessed animals and mystery
+            const divergenceLevel = deepestLevel + 1;
 
-                for (let i = 0; i <= deepestLevel; i++) {
-                    const level = levels[i];
-                    let value;
+            if (divergenceLevel <= 6) {
+                // Add all guessed animals at divergence point
+                guesses.forEach(animal => {
+                    const animalKey = `animal_${animal.commonName}`;
+                    currentNode[animalKey] = {
+                        name: animal.commonName,
+                        scientificName: animal.scientificName,
+                        level: 'animal',
+                        levelIndex: divergenceLevel,
+                        children: {},
+                        animal: animal
+                    };
+                });
 
-                    if (level === 'kingdom') {
-                        value = 'Animalia';
-                    } else if (level === 'species') {
-                        value = targetAnimal.scientificName;
-                    } else {
-                        value = targetAnimal[level] || 'Unknown';
-                    }
-
-                    if (currentNode[value]) {
-                        currentNode = currentNode[value].children;
-                    } else {
-                        break;
-                    }
+                // Add mystery placeholder
+                if (!gameOver) {
+                    currentNode['mystery'] = {
+                        name: '???',
+                        level: 'animal',
+                        levelIndex: divergenceLevel,
+                        children: {},
+                        mystery: true
+                    };
                 }
-
-                // Add mystery at next level
-                const mysteryLevel = levels[deepestLevel + 1];
-                currentNode['???'] = {
-                    name: '???',
-                    level: mysteryLevel,
-                    levelIndex: deepestLevel + 1,
-                    children: {},
-                    mystery: true
-                };
+            } else {
+                // If we've reached species level, just show the animals
+                guesses.forEach(animal => {
+                    const animalKey = `animal_${animal.commonName}`;
+                    currentNode[animalKey] = {
+                        name: animal.commonName,
+                        scientificName: animal.scientificName,
+                        level: 'animal',
+                        levelIndex: 6,
+                        children: {},
+                        animal: animal
+                    };
+                });
             }
 
             return tree;
         }
 
+        // Generate unique ID for each node
+        let nodeIdCounter = 0;
+        function generateNodeId() {
+            return `node-${nodeIdCounter++}`;
+        }
+
         // Render tree recursively with top-down branching
-        function renderTreeNode(node, levelIdx, isFirstChild = false) {
+        function renderTreeNode(node, levelIdx) {
             const levelClasses = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
             const levelLabels = ['Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species'];
 
-            const cssClass = levelClasses[levelIdx];
-            const label = levelLabels[levelIdx];
+            const nodeId = generateNodeId();
+            node.id = nodeId;
 
             let html = '<div class="tree-branch-group">';
 
             // Node itself
-            html += '<div class="tree-node-wrapper">';
+            html += `<div class="tree-node-wrapper" id="${nodeId}">`;
 
-            // Connector line (except for root)
-            if (levelIdx > 0) {
-                html += '<div class="tree-connector-line"></div>';
-            }
-
-            html += '<div class="level-label">' + label + '</div>';
-
-            if (node.mystery) {
-                html += '<div class="tree-node mystery">???</div>';
-            } else if (node.animal) {
-                // This is a species (leaf node)
-                const isTarget = node.animal.scientificName === targetAnimal.scientificName;
-                html += `<div class="tree-node ${isTarget ? 'target' : cssClass}" title="${node.animal.scientificName}">
-                    ${node.animal.commonName}
-                </div>`;
-            } else {
+            // Only show level label for shared path nodes (not for animal nodes)
+            if (node.isSharedPath) {
+                const label = levelLabels[levelIdx];
+                html += '<div class="level-label">' + label + '</div>';
+                const cssClass = levelClasses[levelIdx];
                 html += `<div class="tree-node ${cssClass}">${node.name}</div>`;
+            } else if (node.mystery) {
+                // Mystery placeholder at divergence point
+                html += '<div class="tree-node mystery">???</div>';
+            } else if (node.level === 'animal') {
+                // Animal node at divergence point (no level label)
+                const isTarget = gameOver && node.animal && node.animal.scientificName === targetAnimal.scientificName;
+                const cssClass = isTarget ? 'target' : 'species';
+                const title = node.scientificName || '';
+                html += `<div class="tree-node ${cssClass}" title="${title}">
+                    ${node.name}
+                </div>`;
             }
 
             html += '</div>'; // close tree-node-wrapper
@@ -913,8 +906,8 @@
             const children = Object.values(node.children);
             if (children.length > 0) {
                 html += '<div class="tree-children">';
-                children.forEach((child, index) => {
-                    html += renderTreeNode(child, child.levelIndex, index === 0);
+                children.forEach((child) => {
+                    html += renderTreeNode(child, child.levelIndex);
                 });
                 html += '</div>';
             }
@@ -923,9 +916,86 @@
             return html;
         }
 
+        // Draw smooth SVG connections between nodes
+        function drawConnections() {
+            const container = document.getElementById('treeDisplay');
+            const existingSvg = container.querySelector('.tree-svg');
+            if (existingSvg) {
+                existingSvg.remove();
+            }
+
+            // Get the actual scrollable content area
+            const treeContent = container.querySelector('.tree-content');
+            if (!treeContent) return;
+
+            const containerRect = container.getBoundingClientRect();
+            const contentRect = treeContent.getBoundingClientRect();
+
+            // Create SVG with proper dimensions
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('class', 'tree-svg');
+
+            // Calculate proper SVG dimensions
+            const svgWidth = Math.max(contentRect.width, containerRect.width);
+            const svgHeight = Math.max(contentRect.height, containerRect.height);
+
+            svg.setAttribute('width', svgWidth);
+            svg.setAttribute('height', svgHeight);
+            svg.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`);
+            svg.style.position = 'absolute';
+            svg.style.top = '0';
+            svg.style.left = '0';
+            svg.style.pointerEvents = 'none';
+            svg.style.zIndex = '1';
+            svg.style.overflow = 'visible';
+
+            // Find all nodes and draw connections to their children
+            const allNodes = container.querySelectorAll('.tree-node-wrapper');
+
+            allNodes.forEach(parentNode => {
+                const parentRect = parentNode.getBoundingClientRect();
+                const parentX = parentRect.left + parentRect.width / 2 - containerRect.left;
+                const parentY = parentRect.bottom - containerRect.top;
+
+                // Find children
+                const parentGroup = parentNode.closest('.tree-branch-group');
+                const childrenContainer = parentGroup.querySelector(':scope > .tree-children');
+
+                if (childrenContainer) {
+                    const childWrappers = childrenContainer.querySelectorAll(':scope > .tree-branch-group > .tree-node-wrapper');
+
+                    childWrappers.forEach(childNode => {
+                        const childRect = childNode.getBoundingClientRect();
+                        const childX = childRect.left + childRect.width / 2 - containerRect.left;
+                        const childY = childRect.top - containerRect.top;
+
+                        // Create smooth curved path
+                        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+
+                        // Calculate control points for smooth curve
+                        const midY = parentY + (childY - parentY) * 0.5;
+
+                        const pathData = `M ${parentX} ${parentY} C ${parentX} ${midY}, ${childX} ${midY}, ${childX} ${childY}`;
+
+                        path.setAttribute('d', pathData);
+                        path.setAttribute('stroke', '#52c234');
+                        path.setAttribute('stroke-width', '3');
+                        path.setAttribute('fill', 'none');
+                        path.setAttribute('opacity', '0.7');
+                        path.setAttribute('stroke-linecap', 'round');
+
+                        svg.appendChild(path);
+                    });
+                }
+            });
+
+            container.insertBefore(svg, container.firstChild);
+        }
+
         // Render the tree
         function renderTree() {
             const treeDisplay = document.getElementById('treeDisplay');
+            nodeIdCounter = 0;
 
             if (guesses.length === 0) {
                 treeDisplay.innerHTML = `
@@ -938,15 +1008,22 @@
             }
 
             const tree = buildTreeStructure();
-            let html = '<div class="tree-root">';
+            let html = '<div class="tree-content"><div class="tree-root">';
 
             // Render from root (should only be Animalia)
             Object.values(tree).forEach(rootNode => {
                 html += renderTreeNode(rootNode, rootNode.levelIndex);
             });
 
-            html += '</div>';
+            html += '</div></div>';
             treeDisplay.innerHTML = html;
+
+            // Draw connections after DOM is updated
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    drawConnections();
+                }, 100);
+            });
         }
 
         // Add to guess history
@@ -1052,6 +1129,17 @@
                 </div>
             `;
         }
+
+        // Redraw connections on window resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (guesses.length > 0) {
+                    drawConnections();
+                }
+            }, 100);
+        });
 
         // Initialize
         loadAnimals();
