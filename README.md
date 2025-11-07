@@ -4,30 +4,42 @@
 
 This repository contains a comprehensive taxonomic dataset of animal species with detailed information about their taxonomy, distribution, conservation status, and characteristics.
 
-## 🎮 Animal Taxonomy Wordle Game
+## 🎮 Taxonle - Taxonomy Tree Discovery Game
 
-An interactive browser-based game where you guess animals based on their taxonomic classification!
+An interactive Metazooa-style browser game where you discover a mystery animal through taxonomy!
 
 **Play the game:** Open `index.html` in your browser
 
 ### How to Play
 
-1. The game randomly selects a target animal from the dataset
-2. Enter your guess using either the common name or scientific name
-3. After each guess, see how your animal's taxonomy compares to the target:
-   - 🟢 **Green** = Taxonomy level matches
-   - 🔴 **Red** = Taxonomy level doesn't match
-4. You have 6 attempts to guess the correct animal
-5. Use the autocomplete feature to help find animals in the database
+1. A mystery animal is randomly selected from the dataset
+2. Guess any animal by common or scientific name
+3. The tree reveals what taxonomic levels your guess shares with the target
+4. Each guess shows you how close you are (Kingdom → Phylum → Class → Order → Family → Genus → Species)
+5. The **???** marker appears at the next unrevealed level, showing where the mystery animal branches off
+6. Use clues from shared taxonomy to deduce the target animal
+7. You have 20 guesses to find it!
 
 ### Features
 
 - **760 animals** from the dataset
+- **Metazooa-style gameplay** - discover through shared taxonomy
+- **Visual tree** showing all guessed animals and the mystery placeholder
+- **Color-coded levels** from red (Kingdom) to green (Species)
 - **Autocomplete search** for easy animal selection
-- **Visual feedback** with color-coded taxonomy comparison
+- **Give Up button** to reveal the answer if stuck
+- **Guess history** tracking all attempts
 - **Responsive design** works on desktop and mobile
-- **Guess history** shows all your previous attempts
 - **Fully client-side** - no server required!
+
+### Example
+
+If the target is a **Lion**:
+- Guess "Dog" → Reveals: Animalia → Chordata → Mammalia → Carnivora (then diverges)
+- Tree shows ??? at Family level (you haven't reached Felidae yet)
+- Guess "House Cat" → Reveals deeper: All the way to Felidae
+- Now ??? moves to Genus level
+- Keep guessing to narrow it down!
 
 ## Dataset File
 
