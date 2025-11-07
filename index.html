@@ -48,11 +48,6 @@
             border-radius: 15px;
             padding: 25px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            order: 2;
-        }
-
-        .tree-panel {
-            order: 1;
         }
 
         .stats {
@@ -652,10 +647,12 @@
 
             .left-panel {
                 padding: 20px;
+                order: 2;
             }
 
             .tree-panel {
                 padding: 20px;
+                order: 1;
             }
 
             .tree-container {
@@ -682,19 +679,15 @@
             }
 
             .left-panel {
-                order: 1;
                 width: 350px;
                 flex-shrink: 0;
                 position: sticky;
                 top: 20px;
-                z-index: 10;
             }
 
             .tree-panel {
-                order: 2;
                 flex: 1;
                 min-width: 0;
-                z-index: 1;
             }
         }
     </style>
