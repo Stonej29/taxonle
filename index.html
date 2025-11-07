@@ -578,6 +578,36 @@
             box-shadow: 0 3px 8px rgba(204, 93, 232, 0.4);
         }
 
+        .modal-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .modal-footer button {
+            width: auto;
+            padding: 12px 24px;
+        }
+
+        .apply-btn {
+            background: #52c234;
+        }
+
+        .apply-btn:hover {
+            background: #3da328;
+        }
+
+        .cancel-btn {
+            background: #6c757d;
+        }
+
+        .cancel-btn:hover {
+            background: #5a6268;
+        }
+
         @media (max-width: 1024px) {
             .game-container {
                 grid-template-columns: 1fr;
@@ -671,6 +701,10 @@
                 Click on taxonomy groups to disable them. Disabled groups (greyed out) will be excluded from the animal pool.
             </div>
             <div id="filterTree" class="filter-tree"></div>
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeSettings()">Cancel</button>
+                <button class="apply-btn" onclick="applyFilterSettings()">Apply & Start New Game</button>
+            </div>
         </div>
     </div>
 
@@ -697,6 +731,7 @@
 
         // Track disabled taxonomy paths
         let disabledPaths = new Set();
+        let pendingDisabledPaths = new Set();
 
         // Load animals data
         async function loadAnimals() {
@@ -1268,12 +1303,22 @@
 
         // Settings Modal Functions
         function openSettings() {
+            // Copy active settings to pending
+            pendingDisabledPaths = new Set(disabledPaths);
             buildFilterTree();
             document.getElementById('settingsModal').classList.add('active');
         }
 
         function closeSettings() {
             document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        function applyFilterSettings() {
+            // Apply pending changes to active
+            disabledPaths = new Set(pendingDisabledPaths);
+            updateAnimalCount();
+            closeSettings();
+            startNewGame();
         }
 
         function closeSettingsIfOutside(event) {
@@ -1311,7 +1356,7 @@
             const sortedPhyla = Object.keys(tree).sort();
             sortedPhyla.forEach(phylum => {
                 const phylumPath = `phylum:${phylum}`;
-                const phylumDisabled = disabledPaths.has(phylumPath);
+                const phylumDisabled = pendingDisabledPaths.has(phylumPath);
 
                 html += '<div class="filter-children">';
                 html += `<div class="filter-tree-node">`;
@@ -1326,7 +1371,7 @@
                     html += '<div class="filter-children">';
                     sortedClasses.forEach(className => {
                         const classPath = `phylum:${phylum}|class:${className}`;
-                        const classDisabled = disabledPaths.has(classPath) || phylumDisabled;
+                        const classDisabled = pendingDisabledPaths.has(classPath) || phylumDisabled;
 
                         html += `<div class="filter-tree-node">`;
                         html += `<div class="filter-node-content filter-node-class ${classDisabled ? 'disabled' : ''}"
@@ -1346,24 +1391,23 @@
             container.innerHTML = html;
         }
 
-        // Toggle taxonomy path on/off
+        // Toggle taxonomy path on/off (modifies pending changes only)
         function toggleTaxonomyPath(path, parentPath) {
-            if (disabledPaths.has(path)) {
+            if (pendingDisabledPaths.has(path)) {
                 // Enable this path and all children
-                const pathsToRemove = Array.from(disabledPaths).filter(p => p === path || p.startsWith(path + '|'));
-                pathsToRemove.forEach(p => disabledPaths.delete(p));
+                const pathsToRemove = Array.from(pendingDisabledPaths).filter(p => p === path || p.startsWith(path + '|'));
+                pathsToRemove.forEach(p => pendingDisabledPaths.delete(p));
             } else {
                 // Disable this path (children will be implicitly disabled)
-                disabledPaths.add(path);
+                pendingDisabledPaths.add(path);
 
                 // If parent is disabled, we don't need to explicitly disable children
-                if (parentPath && disabledPaths.has(parentPath)) {
-                    disabledPaths.delete(path);
+                if (parentPath && pendingDisabledPaths.has(parentPath)) {
+                    pendingDisabledPaths.delete(path);
                 }
             }
 
             buildFilterTree();
-            updateAnimalCount();
         }
 
         // Filter animals based on disabled paths
